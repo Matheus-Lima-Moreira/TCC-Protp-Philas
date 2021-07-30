@@ -1,5 +1,4 @@
 <?php
-//TODO: responder com cabeçalho
 include_once "connection.php";
 
 switch ($_SERVER["REQUEST_METHOD"]) {
@@ -23,26 +22,29 @@ switch ($_SERVER["REQUEST_METHOD"]) {
             header("Content-Type: application/json", false);
             
             $post = json_decode($input, true);
-  
+
             $sql =
             'INSERT INTO
-            `tb_usuario` (`nome`, `telefone`, `cpf`, `login`, `senha`, `email`, `tipo`)
+            `tb_atendimento` (`descricao`, `tempo_previsto`, `data_marcada`, `data_iniciada`, `data_finalizada`, `cod_motivo`, `cod_atendido`, `cod_atendente`)
             VALUES
             (
-                "_nome",
-                "_telefone",
-                "_cpf",
-                "_login",
-                "_senha",
-                "_email",
-                "_tipo"
+                "_descricao",
+                _tempo_previsto,
+                "_data_marcada",
+                "_data_iniciada",
+                "_data_finalizada",
+                _cod_motivo,
+                _cod_atendido,
+                _cod_atendente
             )';
 
             // $sql = mysqli_real_escape_string($conn, strtr($sql, $post));
 
+            // echo strtr($sql, $post);
+
             echo mysqli_query($conn, strtr($sql, $post));
 
-            // echo mysqli_error($conn); || mysqli_errono($conn);
+            echo mysqli_error($conn); // || mysqli_errono($conn);
     
             mysqli_close($conn);
 

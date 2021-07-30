@@ -13,7 +13,7 @@
         <script src="../jquery/js/jquery-3.5.1.min.js" type="text/javascript"></script>
         <!-- <script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script> -->
 
-        <script src="js/script.js" type="text/javascript"></script>
+        <script src="js/users.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="container">
@@ -69,7 +69,7 @@
 ######    ALTERAR PRO JQUERY .ajax??
 
 #Poderia ser qualquer $_POST, sim to com preguiça de colocar para todos os campos
-if (isset($_POST["edtNome"]) && $_POST["edtNome"]!="") {
+if (isset($_POST["btnOk"])) {
     $edtNome = $_POST["edtNome"];
     $edtEmail = $_POST["edtEmail"];
     $edtUsuario = $_POST["edtUsuario"];
@@ -80,7 +80,7 @@ if (isset($_POST["edtNome"]) && $_POST["edtNome"]!="") {
 
     $data = [
       "_nome"=>$edtNome,
-      "_tel"=>$edtTelefone,
+      "_telefone"=>$edtTelefone,
       "_cpf"=>$edtCPF,
       "_login"=>$edtUsuario,
       "_senha"=>$edtSenha,

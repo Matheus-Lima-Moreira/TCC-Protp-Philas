@@ -1,9 +1,9 @@
 <?php
 
-// $host = "localhost";
-// $user = "root";
-// $pass = "root";
-// $db = "bd_philas";
+//  $host = "localhost";
+//  $user = "root";
+//  $pass = "";
+//  $db = "bd_philas";
 
 $host = "servidorphiladelpho.com";
 $user = "servid06_phila";

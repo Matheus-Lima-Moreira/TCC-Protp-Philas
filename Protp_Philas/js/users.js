@@ -48,7 +48,7 @@ $(function () {
 
     data = {
       _nome: edtNome.val(),
-      _tel: edtTelefone.val(),
+      _telefone: edtTelefone.val(),
       _cpf: edtCPF.val(),
       _login: edtUsuario.val(),
       _senha: edtSenha.val(),
