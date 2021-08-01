@@ -1,3 +1,7 @@
+html,body {
+  height: 100%;
+}
+
 div {
   margin-top: 1vw;
 }
@@ -58,3 +62,35 @@ div {
   font-family: sans-serif;
   font-size: 13px;
 } */
+
+header::before {
+  --altura: 15vw;
+  content: "";
+  display: block;
+  background-image: url("../img/Prop_Philas-Logo.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: aquamarine; /*FIXME:*/
+  background-size: var(--altura);
+  height: var(--altura);
+}
+
+header {
+  background-color: lightgrey; /*FIXME:*/
+  height: 25vw;
+}
+
+/* FIXME: */
+header span {
+  white-space: pre;
+}
+
+main {
+  background-color: bisque;
+  height: 130vw;
+}
+
+footer {
+  background-color: black;
+  height: 40vw;
+}
