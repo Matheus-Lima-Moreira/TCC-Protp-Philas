@@ -1265,6 +1265,15 @@
       # RewriteRule !.*\.php$.*$ %{REQUEST_URI}.php
       ## para funcionar somente no primeiro diretorio
       
-      RewriteRule ^(?!.*\/)(?!.*\.php$).*$ %{REQUEST_URI}.php
+      RewriteCond %{REQUEST_FILENAME} (?!.*\/)
+      RewriteRule (?!.*\.php$).*$ %{REQUEST_URI}.php
+
 #<</Primero Diretorio>>
+#<<usuario>>
+# TODO: é possivel um RewriteCond para varios RewriteRule?
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+      RewriteCond %{REQUEST_FILENAME} (?=usuario\/)
+      RewriteRule (?!.*\.php$).*$ %{REQUEST_URI}.php
+#<</usuario>>
 </IfModule>
