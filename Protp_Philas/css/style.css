@@ -63,6 +63,7 @@ div {
   font-size: 13px;
 } */
 
+/* 
 header::before {
   --altura: 15vw;
   content: "";
@@ -70,17 +71,17 @@ header::before {
   background-image: url("../img/Prop_Philas-Logo.svg");
   background-repeat: no-repeat;
   background-position: center;
-  background-color: aquamarine; /*FIXME:*/
+  background-color: aquamarine; FIXME:
   background-size: var(--altura);
   height: var(--altura);
 }
 
 header {
-  background-color: lightgrey; /*FIXME:*/
+  background-color: lightgrey; FIXME:
   height: 25vw;
 }
 
-/* FIXME: */
+ FIXME: 
 header span {
   white-space: pre;
 }
@@ -94,3 +95,4 @@ footer {
   background-color: black;
   height: 40vw;
 }
+*/
