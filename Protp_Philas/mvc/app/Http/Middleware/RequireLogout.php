@@ -20,7 +20,7 @@ class RequireLogout {
    */
   public function handle(Request $request, Closure $next) {
     // VERIFICA SE O USUÁRIO ESTÁ DESLOGADO
-    if (SessionLogin::isLogged()) $request->getRouter()->redirect('/usuario'); // FIXME: Retonar pra uma página certa
+    if (SessionLogin::isLogged()) $request->getRouter()->redirect('/usuario');
 
     // CONTINUA A EXECUÇÃO
     return $next($request);

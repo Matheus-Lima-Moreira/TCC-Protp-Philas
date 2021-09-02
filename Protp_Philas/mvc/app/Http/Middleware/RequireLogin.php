@@ -19,7 +19,7 @@ class RequireLogin {
    */
   public function handle(Request $request, Closure $next) {
     // VERIFICA SE O USUÁRIO ESTÁ LOGADO
-    if (!SessionLogin::isLogged()) $request->getRouter()->redirect(''); // FIXME: Retonar pra uma página certa
+    if (!SessionLogin::isLogged()) $request->getRouter()->redirect('/login');
 
     // CONTINUA A EXECUÇÃO
     return $next($request);

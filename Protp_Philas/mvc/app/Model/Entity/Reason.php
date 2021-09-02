@@ -5,7 +5,7 @@ namespace App\Model\Entity;
 use \WilliamCosta\DatabaseManager\Database;
 use \PDOStatement;
 
-// TODO: tipo TEXT
+// TODO: descricao tipo TEXT
 class Reason {
 
   /** @var integer ID do motivo do agendamento */

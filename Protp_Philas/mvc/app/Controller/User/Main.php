@@ -28,24 +28,20 @@ class Main extends Page {
    * @return  string            
    */
   public static function getNewUser() {
-    // CONTEÚDO DO FORMULÁRIO TODO:
-    // $content = View::render('user\\form', [
-    //   'title' => 'Cadastrar Usuário',
-    //   '' => '',
-    // ]);
+    // CONTEÚDO DO FORMULÁRIO
+    $content = View::render('user\\form', [
+      'title_form' => 'Preencha com seus dados',
+      'name'       => '',
+      'lastname'   => '',
+      'phone'      => '',
+      'cpf'        => '',
+      'user'       => '',
+      'email'      => '',
+      'action'     => 'Confirmar'
+    ]);
 
     // RETORNAR A PÁGINA RENDERIZA
-    // return parent::getPage('DashBoard', $content);
-
-    return View::render('user\\form', [
-      'title'    => 'Cadastrar Usuário',
-      'name'     => '',
-      'lastname' => '',
-      'phone'    => '',
-      'user'     => '',
-      'email'    => '',
-      'action'   => 'Confirmar'
-    ]);
+    return parent::getPage('Cadastrar-se', $content, "", "");
   }
 
   /**

@@ -5,7 +5,7 @@ namespace App\Model\Entity;
 use \WilliamCosta\DatabaseManager\Database;
 use \PDOStatement;
 
-// TODO: varchar (255)
+// TODO: todos varchar (255)
 class User {
 
   /** @var integer ID do usuário */

@@ -77,19 +77,21 @@ class Page {
    *
    * @param   string  $title
    * @param   string  $content
+   * @param   string  $header
+   * @param   string  $footer
    *
    * @return  string
    */
-  public static function getPage(string $title, string $content) {
+  public static function getPage(string $title, string $content, ?string $header = null, ?string $footer = null) {
     // INSTÂNCIA DA ENTIDADE 'US'
     $obUs = new Us;
 
     // RENDERIZA A PÁGINA GENÉRICA
     return View::render('user\\page', [
       'title'      => $title,
-      'header'     => self::getHeader(),
+      'header'     => $header ?? self::getHeader(),
       'content'    => $content,
-      'footer'     => self::getFooter(),
+      'footer'     => $footer ?? self::getFooter(),
       'us_name'    => $obUs->name
     ]);
   }

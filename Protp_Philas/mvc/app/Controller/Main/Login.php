@@ -7,7 +7,7 @@ use \App\Model\Entity\User;
 use \App\Session\Login as SessionLogin;
 use \App\Utils\View;
 
-class Login {
+class Login extends Page {
 
   /**
    * Método responsável por retornar o conteúdo (VIEW) do Login
@@ -15,10 +15,11 @@ class Login {
    * @return  string
    */
   public static function getLogin() {
-    // RENDERIZA A PÁGINA DO LOGIN
-    return View::render('login', [
-      'title'      => 'Login',
-    ]);
+    // VIEW DO LOGIN
+    $content = View::render('login');
+
+    // RENDERIZA VIEW DA PÁGINA
+    return parent::getPage('Login', $content, "", "");
   }
 
   /**
@@ -36,7 +37,7 @@ class Login {
     // BUSCA O USUÁRIO PELO LOGIN
     $obUser = User::getUserByLogin($usuario);
 
-    if (!$obUser instanceof User) return self::getLogin(); // FIXME: Custumozia um retorno?
+    if (!$obUser instanceof User) return self::getLogin(); // FIXME: Custumoziar um retorno?
 
     // VERIFICA A SENHA DO USUÁRIO
     if ($senha != $obUser->senha) return self::getLogin(); // FIXME: Add cripto a senha
@@ -58,7 +59,7 @@ class Login {
     // DESTRÓI A SESSÃO DE LOGIN
     SessionLogin::logout();
 
-    // REDIRECIONA O USUÁRIO PARA A TELA DE LOGIN
-    $request->getRouter()->redirect('');
+    // REDIRECIONA O USUÁRIO PARA A TELA INICIAL
+    $request->getRouter()->redirect('/');
   }
 }

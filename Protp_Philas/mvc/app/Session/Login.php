@@ -5,7 +5,6 @@ namespace App\Session;
 use \App\Model\Entity\User;
 use \Firebase\JWT\JWT;
 
-// TODO: add remember me
 class Login {
 
   /**
