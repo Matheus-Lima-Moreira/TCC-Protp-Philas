@@ -13,7 +13,7 @@ class Api {
    * @param   Request  $request  
    * @param   Closure  $next     
    *
-   * @return  Response           
+   * @return  Closure           
    */
   public function handle(Request $request, Closure $next) {
     // ALTERA O CONTENT TYPE PARA JSON

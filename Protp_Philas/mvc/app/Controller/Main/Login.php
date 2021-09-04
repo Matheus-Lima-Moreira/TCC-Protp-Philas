@@ -40,7 +40,7 @@ class Login extends Page {
     if (!$obUser instanceof User) return self::getLogin(); // FIXME: Custumoziar um retorno?
 
     // VERIFICA A SENHA DO USUÁRIO
-    if ($senha != $obUser->senha) return self::getLogin(); // FIXME: Add cripto a senha
+    if (!password_verify($senha, $obUser->senha)) return self::getLogin();
 
     // CRIA A SESSÃO DE LOGIN
     SessionLogin::login($obUser, $lembar);

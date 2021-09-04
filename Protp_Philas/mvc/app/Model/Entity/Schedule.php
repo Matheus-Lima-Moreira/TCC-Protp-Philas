@@ -10,6 +10,9 @@ class Schedule {
   /** @var integer ID do Atendimento */
   public $id;
 
+  /** @var integer Relação ao Motivo do Atendimento */
+  public $cod_motivo;
+
   /** @var string Descrição do Atendimento */
   public $descricao;
 
@@ -25,18 +28,14 @@ class Schedule {
   /** @var string Data que foi finalizado o Atendimento */
   public $data_finalizada;
 
-  /** @var integer Relação ao Motivo do Atendimento */
-  public $cod_motivo;
-
   /** @var integer Relação ao Usuário (Atendido) participante do Atendimento */
   public $cod_atendido;
 
   /** @var integer Relação ao Usuário (Atendente) participante do Atendimento */
   public $cod_atendente;
 
-
   /** @var string Tabela atual no banco de dados da Entidade */
-  private static $table = "tb_atendimento";
+  private static $table = "atendimento";
 
   /**
    * Método responsável por retornar Atendimentos
@@ -73,11 +72,11 @@ class Schedule {
     // INSERE O ATEDIMENTO NO BANCO DE DADOS
     $this->id = (new Database(self::$table))->insert([
       'descricao'       => $this->descricao,
+      'cod_motivo'      => $this->cod_motivo,
       'tempo_previsto'  => $this->tempo_previsto,
       'data_marcada'    => $this->data_marcada,
       'data_iniciada'   => $this->data_iniciada,
       'data_finalizada' => $this->data_finalizada,
-      'cod_motivo'      => $this->cod_motivo,
       'cod_atendido'    => $this->cod_atendido,
       'cod_atendente'   => $this->cod_atendente
     ]);
@@ -95,11 +94,11 @@ class Schedule {
     // ATUALIZA O ATEDIMENTO NO BANCO DE DADOS
     return (new Database(self::$table))->update('id = ' . $this->id, [
       'descricao'       => $this->descricao,
+      'cod_motivo'      => $this->cod_motivo,
       'tempo_previsto'  => $this->tempo_previsto,
       'data_marcada'    => $this->data_marcada,
       'data_iniciada'   => $this->data_iniciada,
       'data_finalizada' => $this->data_finalizada,
-      'cod_motivo'      => $this->cod_motivo,
       'cod_atendido'    => $this->cod_atendido,
       'cod_atendente'   => $this->cod_atendente
     ]);

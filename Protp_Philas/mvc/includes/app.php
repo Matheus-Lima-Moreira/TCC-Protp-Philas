@@ -37,7 +37,8 @@ MiddlewareQueue::setMap([
   'maintenance'     => \App\Http\Middleware\Maintenance::class,
   'required-login'  => \App\Http\Middleware\RequireLogin::class,
   'required-logout' => \App\Http\Middleware\RequireLogout::class,
-  'api'             => \App\Http\Middleware\Api::class
+  'api'             => \App\Http\Middleware\Api::class,
+  'api-auth'        => \App\Http\Middleware\ApiAuth::class
 ]);
 
 

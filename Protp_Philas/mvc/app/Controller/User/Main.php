@@ -63,17 +63,16 @@ class Main extends Page {
 
     // VALIDA O E-MAIL DO USUÁRIO
     $obUserLogin = EntityUser::getUserByLogin($login);
-    if ($obUserLogin instanceof EntityUser) throw new \Exception('Login já existente', 400);
+    if ($obUserLogin instanceof EntityUser) throw new \Exception('Login já existente', 409);
 
     // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
     $obUser = new EntityUser;
     $obUser->nome     = $nome;
-    $obUser->senha    = $senha;
+    $obUser->senha    = password_hash($senha, PASSWORD_DEFAULT);
     $obUser->telefone = $telefone;
     $obUser->cpf      = $cpf;
     $obUser->login    = $login;
     $obUser->email    = $email;
-    $obUser->tipo     = 'Comum';
     $obUser->insert();
 
     // LOGA O USUÁRIO

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use \App\Http\Request;
-use \App\Http\Response;
 use \App\Session\Login as SessionLogin;
 use \Closure;
 
@@ -16,7 +15,7 @@ class RequireLogout {
    * @param   Request  $request  
    * @param   Closure  $next     
    *
-   * @return  Response           
+   * @return  Closure           
    */
   public function handle(Request $request, Closure $next) {
     // VERIFICA SE O USUÁRIO ESTÁ DESLOGADO

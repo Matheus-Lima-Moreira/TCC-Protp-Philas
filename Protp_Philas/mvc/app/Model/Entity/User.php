@@ -4,8 +4,8 @@ namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
 use \PDOStatement;
+use \stdClass;
 
-// TODO: todos varchar (255)
 class User {
 
   /** @var integer ID do usuário */
@@ -13,12 +13,6 @@ class User {
 
   /** @var string Nome do usuário */
   public $nome;
-
-  /** @var integer Telefone do usuário */
-  public $telefone;
-
-  /** @var integer CPF do usuário */
-  public $cpf;
 
   /** @var string Login do usuário */
   public $login;
@@ -29,11 +23,17 @@ class User {
   /** @var string E-mail do usuário */
   public $email;
 
+  /** @var string Telefone do usuário */
+  public $telefone;
+
+  /** @var string CPF do usuário */
+  public $cpf;
+
   /** @var string Tipo relacionado as permissoões do usuário */
   public $tipo;
 
   /** @var string Tabela atual no banco de dados da Entidade */
-  private static $table = "tb_usuario";
+  private static $table = "usuario";
 
   /**
    * Método responsável por retornar Usuários
@@ -81,11 +81,11 @@ class User {
     // INSERE O USUÁRIO NO BANCO DE DADOS
     $this->id = (new Database(self::$table))->insert([
       'nome'     => $this->nome,
-      'telefone' => $this->telefone,
-      'cpf'      => $this->cpf,
       'login'    => $this->login,
       'senha'    => $this->senha,
       'email'    => $this->email,
+      'telefone' => $this->telefone,
+      'cpf'      => $this->cpf,
       'tipo'     => $this->tipo
     ]);
 
@@ -102,11 +102,11 @@ class User {
     // ATUALIZA O USUÁRIO NO BANCO DE DADOS
     return (new Database(self::$table))->update('id = ' . $this->id, [
       'nome'     => $this->nome,
-      'telefone' => $this->telefone,
-      'cpf'      => $this->cpf,
       'login'    => $this->login,
       'senha'    => $this->senha,
       'email'    => $this->email,
+      'telefone' => $this->telefone,
+      'cpf'      => $this->cpf,
       'tipo'     => $this->tipo
     ]);
   }
@@ -119,5 +119,38 @@ class User {
   public function delete() {
     // EXCLUI O USUÁRIO DO BANCO DE DADOS
     return (new Database(self::$table))->delete('id = ' . $this->id);
+  }
+
+  /**
+   * Método responsável por valigar um Token
+   *
+   * @param   stdClass  $token
+   *
+   * @return  boolean
+   */
+  public function isValidToken(stdClass $token) {
+    // VALIDA: ID
+    if ($token->id != $this->id) return false;
+
+    // VALIDA: NOME
+    if (isset($token->nome)) if ($token->nome != $this->nome) return false;
+
+    // VALIDA: LOGIN
+    if ($token->login != $this->login) return false;
+
+    // VALIDA: EMAIL
+    if (isset($token->email)) if ($token->email != $this->email) return false;
+
+    // VALIDA: TELEFONE
+    if (isset($token->telefone)) if ($token->telefone != $this->telefone) return false;
+
+    // VALIDA: CPF
+    if (isset($token->cpf)) if ($token->cpf != $this->cpf) return false;
+
+    // VALIDA: TIPO
+    if (isset($token->tipo)) if ($token->tipo != $this->tipo) return false;
+
+    // TUDO VÁLIDO
+    return true;
   }
 }

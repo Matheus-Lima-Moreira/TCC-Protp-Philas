@@ -81,7 +81,7 @@ class Login {
         // ESTÁ LOGADO
         return true;
       } catch (\Exception $e) {
-        // throw new \Exception("Token inválido", 403); // FIXME: Gerar algum erro interno ou usuario
+        // throw new \Exception("Token inválido", 403); // FIXME: Gerar algum erro interno ou ao usuario
       }
     }
 

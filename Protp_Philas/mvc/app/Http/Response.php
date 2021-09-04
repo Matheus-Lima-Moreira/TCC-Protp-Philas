@@ -19,9 +19,9 @@ class Response {
   /**
    * Método responsável por iniciar a classe e definir os valores
    *
-   * @param integer $httpCode     
-   * @param mixed   $content      
-   * @param string  $contentType  
+   * @param   integer $httpCode     
+   * @param   mixed   $content      
+   * @param   string  $contentType  
    */
   public function __construct(int $httpCode, mixed $content, ?string $contentType = null) {
     $contentType = $contentType ?? $this->contentType;
@@ -34,20 +34,20 @@ class Response {
   /**
    * Método responsável por alterar o content type do response
    *
-   * @param string  $contentType  
+   * @param   string  $contentType  
    */
   public function setContentType(string $contentType) {
     $this->contentType = $contentType;
-    $this->addHeader('Content-Type', $contentType);
+    $this->addHeader('Content-Type', [$contentType]);
   }
 
   /**
    * Método responsável por adicionar um registro no cabeçalho de response
    *
-   * @param string  $key
-   * @param string  $value
+   * @param   string  $key
+   * @param   array  $value
    */
-  public function addHeader(string $key, string $value) {
+  public function addHeader(string $key, array $value) {
     $this->headers[$key] = $value;
   }
 
@@ -60,7 +60,10 @@ class Response {
 
     // ENVIAR HEADERS
     foreach ($this->headers as $key => $value) {
-      header($key . ': ' . $value);
+      // CASO HAJA HEADERS MULTIVALORADOS
+      foreach ($value as $v) {
+        header($key . ': ' . $v, false);
+      }
     }
   }
 

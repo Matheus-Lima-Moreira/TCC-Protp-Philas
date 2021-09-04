@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use \App\Http\Request;
-use \App\Http\Response;
 use \Closure;
 
 class Maintenance {
@@ -14,7 +13,7 @@ class Maintenance {
    * @param   Request  $request  
    * @param   Closure  $next     
    *
-   * @return  Response           
+   * @return  Closure           
    */
   public function handle(Request $request, Closure $next) {
     // VERIFICA O ESTADO DE MANUTENÇÃO DA PÁGINA

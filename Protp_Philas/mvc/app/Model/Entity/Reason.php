@@ -5,7 +5,6 @@ namespace App\Model\Entity;
 use \WilliamCosta\DatabaseManager\Database;
 use \PDOStatement;
 
-// TODO: descricao tipo TEXT
 class Reason {
 
   /** @var integer ID do motivo do agendamento */
@@ -14,11 +13,11 @@ class Reason {
   /** @var string Descrição do motivo do agendamento */
   public $descricao;
 
-  /** @var integer $tempo_previsto Tempo Previsto para o motivo do agendamento específico */
+  /** @var integer Tempo Previsto para o motivo do agendamento específico */
   protected $tempo_previsto = null;
 
   /** @var string Tabela atual no banco de dados da Entidade */
-  private static $table = "tb_motivo";
+  private static $table = "motivo";
 
   /**
    * Método responsável por retornar Motivos
