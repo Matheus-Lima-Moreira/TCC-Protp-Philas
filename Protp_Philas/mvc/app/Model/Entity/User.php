@@ -30,7 +30,7 @@ class User {
   public $cpf;
 
   /** @var string Tipo relacionado as permissoões do usuário */
-  public $tipo;
+  public $tipo = 'Comum';
 
   /** @var string Tabela atual no banco de dados da Entidade */
   private static $table = "usuario";
@@ -82,7 +82,7 @@ class User {
     $this->id = (new Database(self::$table))->insert([
       'nome'     => $this->nome,
       'login'    => $this->login,
-      'senha'    => $this->senha,
+      'senha'    => password_hash($this->senha, PASSWORD_DEFAULT),
       'email'    => $this->email,
       'telefone' => $this->telefone,
       'cpf'      => $this->cpf,
@@ -103,7 +103,7 @@ class User {
     return (new Database(self::$table))->update('id = ' . $this->id, [
       'nome'     => $this->nome,
       'login'    => $this->login,
-      'senha'    => $this->senha,
+      'senha'    => password_hash($this->senha, PASSWORD_DEFAULT),
       'email'    => $this->email,
       'telefone' => $this->telefone,
       'cpf'      => $this->cpf,

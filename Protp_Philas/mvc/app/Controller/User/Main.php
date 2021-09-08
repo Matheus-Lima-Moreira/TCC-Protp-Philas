@@ -54,12 +54,12 @@ class Main extends Page {
   public static function setNewUser(Request $request) {
     // POST VARS
     $postVars = $request->getPostVars();
-    $nome = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
-    $senha = $postVars['senha'];
+    $nome     = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
+    $senha    = $postVars['senha'];
     $telefone = $postVars['telefone'] ?? '';
-    $cpf = $postVars['cpf'];
-    $login = $postVars['usuario'];
-    $email = $postVars['email'];
+    $cpf      = $postVars['cpf'];
+    $login    = $postVars['usuario'];
+    $email    = $postVars['email'];
 
     // VALIDA O E-MAIL DO USUÁRIO
     $obUserLogin = EntityUser::getUserByLogin($login);
@@ -68,7 +68,7 @@ class Main extends Page {
     // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
     $obUser = new EntityUser;
     $obUser->nome     = $nome;
-    $obUser->senha    = password_hash($senha, PASSWORD_DEFAULT);
+    $obUser->senha    = $senha;
     $obUser->telefone = $telefone;
     $obUser->cpf      = $cpf;
     $obUser->login    = $login;
