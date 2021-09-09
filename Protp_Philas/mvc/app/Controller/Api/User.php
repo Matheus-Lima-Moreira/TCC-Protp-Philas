@@ -2,11 +2,11 @@
 
 namespace App\Controller\Api;
 
-use \App\Http\Request;
-use \App\Model\Entity\User as EntityUser;
+use App\Http\Request;
+use App\Model\Entity\User as EntityUser;
 use App\Utils\CPF;
 use App\Utils\Masker;
-use \WilliamCosta\DatabaseManager\Pagination;
+use WilliamCosta\DatabaseManager\Pagination;
 
 class User extends Api {
 
@@ -73,7 +73,7 @@ class User extends Api {
    *
    * @return  array
    */
-  private static function getUsersItems(Request $request, ?Pagination &$obPagination) {
+  private static function getUsersItems(Request $request, ?Pagination &$obPagination): array {
     // USUÁRIOS
     $itens = [];
 
@@ -160,7 +160,7 @@ class User extends Api {
    *
    * @return  void
    */
-  private static function validateFields(array $postVars): void {
+  private static function validateFields(array &$postVars): void {
     // VALIDA OS CAMPOS OBRIGÁTORIOS
     if (
       !isset($postVars['login']) ||
@@ -169,7 +169,7 @@ class User extends Api {
     ) throw new \Exception("Os campos 'login', 'senha' e 'cpf' são obrigatórios", 400);
 
     // VALIDA O CPF
-    if (!CPF::isvalid(Masker::remove($postVars['cpf'])))
+    if (!CPF::isvalid($postVars['cpf'] = Masker::remove($postVars['cpf'])))
       throw new \Exception("CPF '$postVars[cpf]' inválido", 400);
   }
 

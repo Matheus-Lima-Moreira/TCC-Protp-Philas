@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use \App\Http\Request;
-use \App\Http\Response;
-use \Closure;
+use App\Http\Request;
+use App\Http\Response;
+use Closure;
 
 class Queue {
 
@@ -90,7 +90,7 @@ class Queue {
    *
    * @return  Response           
    */
-  public function next(Request $request) {;
+  public function next(Request $request) {
     // VERIFICA SE A FILA ESTÁ VAZIA
     if (empty($this->middlewares)) return call_user_func_array($this->controller, $this->controllerArgs);
 

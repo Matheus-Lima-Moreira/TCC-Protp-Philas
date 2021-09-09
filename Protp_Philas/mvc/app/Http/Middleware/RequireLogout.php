@@ -2,12 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use \App\Http\Request;
-use \App\Session\Login as SessionLogin;
-use \Closure;
+use App\Http\Request;
+use App\Session\Login as SessionLogin;
+use Closure;
 
 class RequireLogout {
-
 
   /**
    * Método responsável por executar o middleware
