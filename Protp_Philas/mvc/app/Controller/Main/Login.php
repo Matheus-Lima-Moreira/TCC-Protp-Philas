@@ -2,10 +2,10 @@
 
 namespace App\Controller\Main;
 
-use \App\Http\Request;
-use \App\Model\Entity\User;
-use \App\Session\Login as SessionLogin;
-use \App\Utils\View;
+use App\Http\Request;
+use App\Model\Entity\User;
+use App\Session\Login as SessionLogin;
+use App\Utils\View;
 
 class Login extends Page {
 

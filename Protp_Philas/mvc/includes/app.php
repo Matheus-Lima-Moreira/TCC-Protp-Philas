@@ -1,14 +1,14 @@
 <?php
 
-require_once(__DIR__ . '\\..\\composer\\vendor\\autoload.php');
+require_once(__DIR__ . '/../composer/vendor/autoload.php');
 
-use \App\Http\Middleware\Queue as MiddlewareQueue;
-use \App\Utils\View;
-use \WilliamCosta\DatabaseManager\Database;
-use \WilliamCosta\DotEnv\Environment;
+use App\Http\Middleware\Queue as MiddlewareQueue;
+use App\Utils\View;
+use WilliamCosta\DatabaseManager\Database;
+use WilliamCosta\DotEnv\Environment;
 
 // CARREGA VARIÁVEIS DE AMBIENTE
-Environment::load(__DIR__ . "\\..\\");
+Environment::load(__DIR__ . "/../");
 
 // DEFINE AS CONFIGURAÇÕES DE BANCO DE DADOS
 Database::config(

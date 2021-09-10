@@ -2,9 +2,9 @@
 
 namespace App\Controller\Main;
 
-use \App\Http\Request;
-use \App\Model\Entity\Us;
-use \App\Utils\View;
+use App\Http\Request;
+use App\Model\Entity\Us;
+use App\Utils\View;
 
 class Page {
 
@@ -59,7 +59,7 @@ class Page {
       $link = $url . '?' . http_build_query($queryParams);
 
       // VIEW
-      $links .= View::render('\\pages\\pagination\\link', [
+      $links .= View::render('/pages/pagination/link', [
         'page'   => $page['page'],
         'link'   => $link,
         'active' => $page['current'] ? 'active' : ''
@@ -67,7 +67,7 @@ class Page {
     }
 
     // RENDERIZA BOX DE PAGINAÇÃO
-    return  View::render('\\pages\\pagination\\box', [
+    return  View::render('/pages/pagination/box', [
       'links' => $links
     ]);
   }

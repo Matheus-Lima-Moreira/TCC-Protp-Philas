@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use \App\Http\Request;
-use \Closure;
+use App\Http\Request;
+use Closure;
 
 class Api {
 

@@ -2,11 +2,11 @@
 
 namespace App\Controller\Api;
 
-use \App\Http\Request;
-use \App\Model\Entity\Us as EntityUs;
-use \App\Model\Entity\User as EntityUser;
-use \Firebase\JWT\JWT;
-use \WilliamCosta\DatabaseManager\Pagination;
+use App\Http\Request;
+use App\Model\Entity\Us as EntityUs;
+use App\Model\Entity\User as EntityUser;
+use Firebase\JWT\JWT;
+use WilliamCosta\DatabaseManager\Pagination;
 
 class Api {
 

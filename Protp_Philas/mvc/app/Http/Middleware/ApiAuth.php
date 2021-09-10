@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use \App\Http\Request;
-use \App\Http\Response;
-use \App\Model\Entity\User as EntityUser;
-use \Closure;
-use \Firebase\JWT\JWT;
+use App\Http\Request;
+use App\Http\Response;
+use App\Model\Entity\User as EntityUser;
+use Closure;
+use Firebase\JWT\JWT;
 
 class ApiAuth {
 

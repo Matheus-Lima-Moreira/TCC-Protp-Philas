@@ -2,8 +2,8 @@
 
 namespace App\Model\Entity;
 
-use \WilliamCosta\DatabaseManager\Database;
-use \PDOStatement;
+use WilliamCosta\DatabaseManager\Database;
+use PDOStatement;
 
 class Reason {
 

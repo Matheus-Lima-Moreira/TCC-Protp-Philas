@@ -2,9 +2,9 @@
 
 namespace App\Controller\User;
 
-use \App\Http\Request;
-use \App\Model\Entity\Us;
-use \App\Utils\View;
+use App\Http\Request;
+use App\Model\Entity\Us;
+use App\Utils\View;
 
 class Page {
 
@@ -14,7 +14,7 @@ class Page {
    * @return  string
    */
   private static function getHeader() {
-    return View::render('user\\header');
+    return View::render('user/header');
   }
 
   /**
@@ -23,7 +23,7 @@ class Page {
    * @return  string
    */
   private static function getFooter() {
-    return View::render('user\\footer');
+    return View::render('user/footer');
   }
 
   /**
@@ -59,7 +59,7 @@ class Page {
       $link = $url . '?' . http_build_query($queryParams);
 
       // VIEW
-      $links .= View::render('\\pages\\pagination\\link', [
+      $links .= View::render('/pages/pagination/link', [
         'page'   => $page['page'],
         'link'   => $link,
         'active' => $page['current'] ? 'active' : ''
@@ -67,7 +67,7 @@ class Page {
     }
 
     // RENDERIZA BOX DE PAGINAÇÃO
-    return  View::render('\\pages\\pagination\\box', [
+    return  View::render('/pages/pagination/box', [
       'links' => $links
     ]);
   }
@@ -87,7 +87,7 @@ class Page {
     $obUs = new Us;
 
     // RENDERIZA A PÁGINA GENÉRICA
-    return View::render('user\\page', [
+    return View::render('user/page', [
       'title'      => $title,
       'header'     => $header ?? self::getHeader(),
       'content'    => $content,

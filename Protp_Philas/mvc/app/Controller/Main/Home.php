@@ -2,7 +2,7 @@
 
 namespace App\Controller\Main;
 
-use \App\Utils\View;
+use App\Utils\View;
 
 class Home extends Page {
 

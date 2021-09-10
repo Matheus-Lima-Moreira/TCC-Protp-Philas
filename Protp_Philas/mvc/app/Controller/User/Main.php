@@ -2,10 +2,10 @@
 
 namespace App\Controller\User;
 
-use \App\Http\Request;
-use \App\Model\Entity\User as EntityUser;
-use \App\Session\Login as SessionLogin;
-use \App\Utils\View;
+use App\Http\Request;
+use App\Model\Entity\User as EntityUser;
+use App\Session\Login as SessionLogin;
+use App\Utils\View;
 
 class Main extends Page {
 
@@ -16,10 +16,10 @@ class Main extends Page {
    */
   public static function getHome() {
     // VIEW DA HOME
-    $content =  View::render('user\\home');
+    $content =  View::render('user/home');
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage('DashBoard', $content);
+    return parent::getPage('Início', $content);
   }
 
   /**
@@ -29,7 +29,7 @@ class Main extends Page {
    */
   public static function getNewUser() {
     // CONTEÚDO DO FORMULÁRIO
-    $content = View::render('user\\form', [
+    $content = View::render('user/form', [
       'title_form' => 'Preencha com seus dados',
       'name'       => '',
       'lastname'   => '',

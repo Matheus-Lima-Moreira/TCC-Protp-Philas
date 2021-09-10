@@ -2,10 +2,10 @@
 
 namespace App\Http;
 
-use \App\Http\Middleware\Queue as MiddlewareQueue;
-use \Closure;
-use \Exception;
-use \ReflectionFunction;
+use App\Http\Middleware\Queue as MiddlewareQueue;
+use Closure;
+use Exception;
+use ReflectionFunction;
 
 class Router {
 

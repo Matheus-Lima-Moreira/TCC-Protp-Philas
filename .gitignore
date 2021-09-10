@@ -1,0 +1,33 @@
+# Auto
+# .gitignore
+
+# Config
+.vscode/
+.vsls.json
+
+# controle
+A codar*.txt
+
+# Logs
+CHANGELOG.md
+
+# Frameworks
+bootstrap/
+jquery/
+# nn sei se esse é Framework nn (TypeScript v1 declaration files)
+typings/ 
+
+# dotenv environment variables file
+.env
+
+# --- Protótipo ---
+
+# O que já não é mais usado, mas pode ser utíl
+Coisas_antigas/
+sem_mvc/
+
+# Pasta para salvar credenciais 
+logins_lembrar/
+
+# Cache dos Testes
+.phpunit*
