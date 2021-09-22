@@ -47,7 +47,7 @@ class Schedule {
    *
    * @return  PDOStatement          
    */
-  public static function getResons(string $where = null, string $order = null, string $limit = null, string $fields = '*') {
+  public static function getSchedules(string $where = null, string $order = null, string $limit = null, string $fields = '*') {
     return (new Database(self::$table))->select($where, $order, $limit, $fields);
   }
 
@@ -58,8 +58,8 @@ class Schedule {
    *
    * @return  Schedule    
    */
-  public static function getResonById(int $id) {
-    return self::getResons("id = $id")->fetchObject(self::class);
+  public static function getScheduleById(int $id) {
+    return self::getSchedules("id = $id")->fetchObject(self::class);
   }
 
 

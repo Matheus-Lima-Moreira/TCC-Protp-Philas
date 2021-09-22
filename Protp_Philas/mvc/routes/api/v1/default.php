@@ -1,8 +1,8 @@
 <?php
 
-use \App\Controller\Api;
-use \App\Http\Request;
-use \App\Http\Response;
+use App\Controller\Api;
+use App\Http\Request;
+use App\Http\Response;
 
 // ROTA RAIZ DA API (v1)
 $obRouter->get('/api/v1', [

@@ -6,7 +6,7 @@ use App\Http\Request;
 use App\Session\Login as SessionLogin;
 use Closure;
 
-class RequireLogout {
+class RequireLogout implements MiddlewareInterface {
 
   /**
    * Método responsável por executar o middleware

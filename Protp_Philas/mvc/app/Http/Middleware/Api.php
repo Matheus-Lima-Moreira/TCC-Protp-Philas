@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\Http\Request;
 use Closure;
 
-class Api {
+class Api implements MiddlewareInterface {
 
   /**
    * Método responsável por executar o middleware

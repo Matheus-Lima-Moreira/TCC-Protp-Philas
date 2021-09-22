@@ -80,13 +80,8 @@ class Api {
 
     // PAYLOAD
     $payload = [
-      'id'       => $obUser->id,
-      'nome'     => $obUser->nome,
-      'login'    => $obUser->login,
-      'email'    => $obUser->email,
-      'telefone' => $obUser->telefone,
-      'cpf'      => $obUser->cpf,
-      'tipo'     => $obUser->tipo
+      'id'    => $obUser->id,
+      'login' => $obUser->login
     ];
 
     // RETORNA O TOKEN GERADO

@@ -14,7 +14,7 @@ class Reason {
   public $descricao;
 
   /** @var integer Tempo Previsto para o motivo do agendamento específico */
-  protected $tempo_previsto = null;
+  public $tempo_previsto;
 
   /** @var string Tabela atual no banco de dados da Entidade */
   private static $table = "motivo";
@@ -29,7 +29,7 @@ class Reason {
    *
    * @return  PDOStatement          
    */
-  public static function getResons(string $where = null, string $order = null, string $limit = null, string $fields = '*') {
+  public static function getReasons(string $where = null, string $order = null, string $limit = null, string $fields = '*') {
     return (new Database(self::$table))->select($where, $order, $limit, $fields);
   }
 
@@ -40,8 +40,8 @@ class Reason {
    *
    * @return  Reason    
    */
-  public static function getResonById(int $id) {
-    return self::getResons("id = $id")->fetchObject(self::class);
+  public static function getReasonById(int $id) {
+    return self::getReasons("id = $id")->fetchObject(self::class);
   }
 
 

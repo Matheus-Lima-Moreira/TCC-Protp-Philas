@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\Http\Request;
 use Closure;
 
-class Maintenance {
+class Maintenance implements MiddlewareInterface  {
 
   /**
    * Método responsável por executar o middleware

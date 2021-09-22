@@ -8,7 +8,7 @@ use App\Model\Entity\User as EntityUser;
 use Closure;
 use Firebase\JWT\JWT;
 
-class ApiAuth {
+class ApiAuth implements MiddlewareInterface {
 
   /**
    * Método responsável por retonar se há uma autenticação básica
@@ -81,7 +81,7 @@ class ApiAuth {
       // RETORNA A ENTIDADE USUÁRIO
       return $obUser;
     } catch (\Exception $e) {
-      throw new \Exception('Token inválido', 400);
+      throw new \Exception('Token inválido', 403); // FIXME: Gerar um aviso ao usuário
     }
   }
 

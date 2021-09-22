@@ -2,8 +2,8 @@
 
 namespace App\Session;
 
-use \App\Model\Entity\User;
-use \Firebase\JWT\JWT;
+use App\Model\Entity\User;
+use Firebase\JWT\JWT;
 
 class Login {
 
@@ -28,11 +28,7 @@ class Login {
     self::init();
 
     // DEFINE A SESSÃO DO USUÁRIO
-    $_SESSION['ph_login']['usuario'] = [
-      'id'    => $obUser->id,
-      'nome'  => $obUser->nome,
-      'email' => $obUser->email
-    ];
+    $_SESSION['ph_login']['usuario'] = $obUser;
 
     // DEFINE O TOKEN EM COOKIES
     if ($remember) self::remember($obUser);
@@ -50,8 +46,7 @@ class Login {
     // PAYLOAD
     $payload = [
       'id'    => $obUser->id,
-      'nome'  => $obUser->nome,
-      'email' => $obUser->email
+      'login' => $obUser->login
     ];
 
     // ENCODA E SALVA NOS COOKIES POR UM ANO
@@ -68,12 +63,19 @@ class Login {
     // INICIA A SESSÃO
     self::init();
 
+    // BUSCA PELA SESSÃO DO USUÁRIO
+    $return = isset($_SESSION['ph_login']['usuario']);
+
     // BUSCA POR TOKEN NOS COOKIES
-    if (isset($_COOKIE['ph_login-token'])) {
+    if (!$return && isset($_COOKIE['ph_login-token'])) {
       // VERIFICA SE O TOKEN É VÁLIDO
       try {
         // DECODE
         $jwt = JWT::decode($_COOKIE['ph_login-token'], getenv('JWT_KEY'), ['HS256']);
+
+        // VALIDA OS DADOS FORNECIDOS NO JWT
+        $obUser = \App\Model\Entity\User::getUserByLogin($jwt->login);
+        if (!$obUser->isValidToken($jwt)) throw new \Exception();
 
         // RENOVA O LOGIN
         self::login($jwt, true);
@@ -81,12 +83,12 @@ class Login {
         // ESTÁ LOGADO
         return true;
       } catch (\Exception $e) {
-        // throw new \Exception("Token inválido", 403); // FIXME: Gerar algum erro interno ou ao usuario
+        throw new \Exception("Token inválido", 403); // FIXME: Gerar algum erro interno ou ao usuario
       }
     }
 
     // RETORNA A VERIFICAÇÃO
-    return isset($_SESSION['ph_login']['usuario']['id']);
+    return $return;
   }
 
   /**

@@ -1,8 +1,8 @@
 <?php
 
-use \App\Controller\Api;
-use \App\Http\Request;
-use \App\Http\Response;
+use App\Controller\Api;
+use App\Http\Request;
+use App\Http\Response;
 
 // ROTA DE LISTAGEM DE TODOS OS USUÁRIOS
 $obRouter->get('/api/v1/users', [

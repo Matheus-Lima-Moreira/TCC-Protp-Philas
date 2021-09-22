@@ -163,6 +163,7 @@ class Router {
     $httpMethod = $this->request->getHttpMethod();
 
     // VALIDA AS ROTAS
+    krsort($this->routes); // FIXME: melhorar com 'uksort()'
     foreach ($this->routes as $patternRoute => $methods) {
       // VERIFICA SE A URI BATE O PADRÃO
       if (preg_match($patternRoute, $uri, $matches)) {
