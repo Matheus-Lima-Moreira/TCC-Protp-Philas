@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Request;
 use App\Http\Response;
+use App\Utils\Arrays;
 use Closure;
 
 class Queue {
@@ -36,8 +37,21 @@ class Queue {
    * @param   Request  $request  
    */
   public function __construct(array $middlewares, Closure $controller, array $controllerArgs, Request $request) {
-    $this->middlewares = array_merge(self::$default, $middlewares);
+    $this->middlewares = self::$default;
+    $this->setMiddlewaresPerRout($request);
+    Arrays::mergeRight($this->middlewares, $middlewares);
+    ksort($this->middlewares);
 
+    $this->controller     = $controller;
+    $this->controllerArgs = $controllerArgs;
+  }
+
+  /**
+   * Método responsável por definir os middlewares por rotas
+   *
+   * @param   Request  $request
+   */
+  private function setMiddlewaresPerRout(Request $request): void {
     // ROTA ATUAL
     $uri = $request->getRouter()->getUri();
 
@@ -47,13 +61,9 @@ class Queue {
 
       // VERIFICA SE A ROTA ATUAL PERTEMCE AO PADRÃO
       if (preg_match($patternRoute, $uri)) {
-        $this->middlewares = array_merge(self::$default, $value, $middlewares);
-        break;
+        Arrays::mergeRight($this->middlewares, $value);
       }
     }
-
-    $this->controller     = $controller;
-    $this->controllerArgs = $controllerArgs;
   }
 
   /**

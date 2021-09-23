@@ -99,16 +99,21 @@ class User {
    * @return  boolean
    */
   public function update() {
-    // ATUALIZA O USUÁRIO NO BANCO DE DADOS
-    return (new Database(self::$table))->update('id = ' . $this->id, [
+    // DADOS DO USUÁRIO
+    $userData = [
       'nome'     => $this->nome,
       'login'    => $this->login,
-      'senha'    => password_hash($this->senha, PASSWORD_DEFAULT),
       'email'    => $this->email,
       'telefone' => $this->telefone,
       'cpf'      => $this->cpf,
       'tipo'     => $this->tipo
-    ]);
+    ];
+    
+    // SE NÃO HOUVER SENHA, IGNORE-A
+    if (isset($this->senha)) $userData['senha'] = password_hash($this->senha, PASSWORD_DEFAULT);
+     
+    // ATUALIZA O USUÁRIO NO BANCO DE DADOS
+    return (new Database(self::$table))->update('id = ' . $this->id, $userData);
   }
 
   /**

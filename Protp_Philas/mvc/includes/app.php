@@ -38,11 +38,13 @@ MiddlewareQueue::setMap([
   'required-login'  => \App\Http\Middleware\RequireLogin::class,
   'required-logout' => \App\Http\Middleware\RequireLogout::class,
   'api'             => \App\Http\Middleware\Api::class,
-  'api-auth'        => \App\Http\Middleware\ApiAuth::class
+  'api-auth'        => \App\Http\Middleware\ApiAuth::class,
+  'admin'           => \App\Http\Middleware\Admin::class,
 ]);
 
-
-// DEFINIR MIDDLEWARE PADRÕES POR ROTAS
+// DEFINE MIDDLEWARES PADRÕES POR ROTAS
 MiddlewareQueue::setDefaultPerRoutes([
-  'usuario' => ['required-login']
+  'usuario'          => ['required-login'],
+  'api'              => [-1 => 'api'],
+  'api\/v1\/reasons' => ['api-auth'],
 ]);
