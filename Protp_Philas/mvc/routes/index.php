@@ -1,12 +1,13 @@
 <?php
 
-use \App\Controller\Main;
-use \App\Http\Response;
+use App\Controller\Index;
+use App\Http\Request;
+use App\Http\Response;
 
 // ROTA HOME
 $obRouter->get('/', [
   function () {
-    return new Response(200, Main\Home::getHome());
+    return new Response(200, Index\Home::getHome());
   }
 ]);
 
@@ -16,7 +17,7 @@ $obRouter->get('/login', [
     'required-logout'
   ],
   function () {
-    return new Response(200, Main\Login::getLogin());
+    return new Response(200, Index\Login::getLogin());
   }
 ]);
 
@@ -25,18 +26,17 @@ $obRouter->post('/login', [
   'middlewares' => [
     'required-logout'
   ],
-  function ($request) {
-    return new Response(200, Main\Login::setLogin($request));
+  function (Request $request) {
+    return new Response(200, Index\Login::setLogin($request));
   }
 ]);
 
 // ROTA DE LOGOUT
-// $obRouter->get('/usuario/logout', [
 $obRouter->get('/logout', [
   'middlewares' => [
     'required-login'
   ],
-  function ($request) {
-    return new Response(200, Main\Login::setLogout($request));
+  function (Request $request) {
+    return new Response(200, Index\Login::setLogout($request));
   }
 ]);

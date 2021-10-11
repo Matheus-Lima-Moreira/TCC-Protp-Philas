@@ -1,7 +1,7 @@
-<?php 
+<?php
 
-use \App\Controller\User;
-use \App\Http\Response;
+use App\Controller\User;
+use App\Http\Response;
 
 // ROTA MINHA CONTA (ALTERAÇÃO)
 $obRouter->get('/usuario/minhaConta', [
@@ -10,7 +10,7 @@ $obRouter->get('/usuario/minhaConta', [
    ],
    function () {
        return new Response(200, User\MyAccount::getMyAccount() );
-   } 
+  }
 ]);
 
 // ROTA MINHA CONTA (POST)

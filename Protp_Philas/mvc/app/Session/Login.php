@@ -2,7 +2,7 @@
 
 namespace App\Session;
 
-use App\Model\Entity\User;
+use App\Model\Entity\User as EntityUser;
 use Firebase\JWT\JWT;
 
 class Login {
@@ -18,12 +18,12 @@ class Login {
   /**
    * Método responsável por criar o login do usuário
    *
-   * @param   User    $obUser
-   * @param   boolean $remember 
+   * @param   EntityUser    $obUser
+   * @param   boolean       $remember 
    *
    * @return  boolean        
    */
-  public static function login(Object $obUser, bool $remember = false) {
+  public static function login(Object $obUser, bool $remember = false): bool {
     // INICIA A SESSÃO
     self::init();
 
@@ -40,7 +40,7 @@ class Login {
   /**
    * Método responsável por gerar um token JWT e salvar
    *
-   * @param   User  $obUser  
+   * @param   EntityUser  $obUser  
    */
   private static function remember(Object $obUser) {
     // PAYLOAD
@@ -59,7 +59,7 @@ class Login {
    *
    * @return  boolean
    */
-  public static function isLogged() {
+  public static function isLogged(): bool {
     // INICIA A SESSÃO
     self::init();
 
@@ -74,7 +74,7 @@ class Login {
         $jwt = JWT::decode($_COOKIE['ph_login-token'], getenv('JWT_KEY'), ['HS256']);
 
         // VALIDA OS DADOS FORNECIDOS NO JWT
-        $obUser = \App\Model\Entity\User::getUserByLogin($jwt->login);
+        $obUser = EntityUser::getUserByLogin($jwt->login);
         if (!$obUser->isValidToken($jwt)) throw new \Exception();
 
         // RENOVA O LOGIN
@@ -96,7 +96,7 @@ class Login {
    *
    * @return  boolean
    */
-  public static function logout() {
+  public static function logout(): bool {
     // INICIA A SESSÃO
     self::init();
 

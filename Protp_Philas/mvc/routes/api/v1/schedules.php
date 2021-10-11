@@ -16,7 +16,7 @@ $obRouter->get('/api/v1/schedules', [
 ]);
 
 // ROTA DE LISTAGEM DE TODOS OS ATENDIMENTOS DO USUÁRIO LOGADO
-$obRouter->get('/api/v1/schedules/my', [
+$obRouter->get('/api/v1/schedules/mine', [
   'middlewares' => [
     'api-auth'
   ],
@@ -59,14 +59,15 @@ $obRouter->post('/api/v1/schedules', [
 // ROTA DE ATUALIZAÇÃO DE ATENDIMENTOS
 $obRouter->put('/api/v1/schedules/{id}', [
   'middlewares' => [
-    'api-auth'
+    'api-auth',
+    'admin'
   ],
   function (Request $request, $id) {
     return new Response(200, Api\Schedule::setEditSchedule($request, $id), 'application/json');
   }
 ]);
 
-// ROTA DE ATUALIZAÇÃO DE ATENDIMENTOS
+// ROTA DE EXCLUSÃO DE ATENDIMENTOS
 $obRouter->delete('/api/v1/schedules/{id}', [
   'middlewares' => [
     'api-auth',

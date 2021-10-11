@@ -20,7 +20,12 @@ Database::config(
 );
 
 // DEFNIE A CONSTANTE DE URL DO PROJETO
-define('URL', getenv('URL'));
+$scheme = $_SERVER['REQUEST_SCHEME'];
+$domain = $_SERVER['SERVER_NAME'];
+$port   = $_SERVER['SERVER_PORT'];
+$root   = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+
+define('URL', "$scheme://$domain:$port$root");
 
 // DEFININE O VALOR PADRÃO DAS VARIÁVEIS
 View::init([

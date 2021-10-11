@@ -8,9 +8,9 @@ use App\Http\Router;
 $obRouter = new Router(URL);
 
 // INCLUI AS ROTAS DAS PÁGINAS PRINCIPAIS
-include_once(__DIR__ . '/routes/main.php');
+include_once(__DIR__ . '/routes/index.php');
 
-// INCLUI AS ROTAS DAS PÁGINAS DO USUÁRIO (?)
+// INCLUI AS ROTAS DAS PÁGINAS DO USUÁRIO
 include_once(__DIR__ . '/routes/user.php');
 
 // INCLUI AS ROTAS DAS APIS
