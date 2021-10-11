@@ -16,8 +16,8 @@ $obRouter->get('/singup', [
   'middlewares' => [
     'required-logout'
   ],
-  function () {
-    return new Response(200, User\Main::getNewUser());
+  function (Request $request) {
+    return new Response(200, User\Main::getNewUser($request));
   }
 ]);
 

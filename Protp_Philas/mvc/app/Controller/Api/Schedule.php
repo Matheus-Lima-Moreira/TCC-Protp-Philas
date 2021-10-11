@@ -98,6 +98,44 @@ class Schedule extends Api {
   }
 
   /**
+   * Método responsável por retornar a clausula WHERE do SQL válida
+   *
+   * @param   array|string  $where
+   *
+   * @return  string
+   */
+  private static function getWhere(array|string $where): string {
+    // WHERES PERMITDOS COM SUAS ARROW FUNCTIONS
+    $wheres = [
+      'isopen'         => fn () => '(data_marcada IS NULL OR data_marcada <= 0)',
+      'noexpectedtime' => fn () => '(tempo_previsto IS NULL AND cod_motivo IS NULL)',
+    ];
+
+    // CLAUSULA A SER RETORNADA
+    $return = '';
+
+    // USA RECURSIVIDADE PARA CASOS DE MULTIVALORADOS
+    if (gettype($where) == 'array') {
+      for ($i = 0; $i < count($where); $i++) {
+        $return .= ($i > 0 ? ' AND ' : '') . self::getWhere($where[$i]);
+      }
+    } else {
+      // REPARTE EM CLAUSULA : PARAMETRO
+      $where = explode(':', $where, 2);
+
+      // VERIFICA SE O WHERE EXISTE
+      if (!array_key_exists($where[0], $wheres))
+        throw new \Exception('Clausula Where inválida. Permitidas: [' . implode(', ', array_keys($wheres)) . ']');
+
+      // ADICIONA A CLAUSULA WHERE
+      $return = $wheres[$where[0]]($where[1] ?? null);
+    }
+
+    // RETORNA O SQL WHERE
+    return $return;
+  }
+
+  /**
    * Método responsável por retornar os atendimentos cadastrados
    *
    * @param   Request  $request
@@ -105,8 +143,14 @@ class Schedule extends Api {
    * @return  array
    */
   public static function getSchedules(Request $request): array {
+    // QUERY PARAMS
+    $queryParams = $request->getQueryParams();
+
+    // SQL WHERE
+    $where = isset($queryParams['where']) ? self::getWhere($queryParams['where']) : null;
+
     return [
-      'atendimentos' => self::getSchedulesItems($request, $obPagination),
+      'atendimentos' => self::getSchedulesItems($request, $obPagination, $where),
       'paginacao' => parent::getPagination($request, $obPagination)
     ];
   }
@@ -133,7 +177,7 @@ class Schedule extends Api {
   }
 
   /**
-   * Método responsável por retornas os atendimentos do usuário logado
+   * Método responsável por retorna os atendimentos do usuário logado
    *
    * @param   Request  $request
    *
@@ -143,12 +187,18 @@ class Schedule extends Api {
     // USUÁRIO LOGADO
     $userLogged = $request->userLogged;
 
+    // QUERY PARAMS
+    $queryParams = $request->getQueryParams();
+
+    // SQL WHERE
+    $where = isset($queryParams['where']) ? ' AND ' . self::getWhere($queryParams['where']) : null;
+
     // O QUE SERÁ RETORNADO
     $return = [];
 
     // GUARDA OS ATENDIMEOS QUE SE É O ATENDIDO
     $return = $atendido =  [
-      'atendimentos' => self::getSchedulesItems($request, $obPagination, "cod_atendido = $userLogged->id"),
+      'atendimentos' => self::getSchedulesItems($request, $obPagination, "cod_atendido = $userLogged->id" . $where),
       'paginacao' => parent::getPagination($request, $obPagination)
     ];
 
@@ -159,7 +209,7 @@ class Schedule extends Api {
       $return['atendido'] = $atendido;
 
       $return['atendente'] = [
-        'atendimentos' => self::getSchedulesItems($request, $obPagination, "cod_atendente = $userLogged->id"),
+        'atendimentos' => self::getSchedulesItems($request, $obPagination, "cod_atendente = $userLogged->id" . $where),
         'paginacao' => parent::getPagination($request, $obPagination)
       ];
     }
@@ -392,6 +442,9 @@ class Schedule extends Api {
 
     // VALIDA OS CAMPOS
     self::validateFields($postVars);
+
+    // VARIFICA SE A DATA MARCADA ESTÁ DISPONÍVEL
+    // TODO: terminar isso aqui lol
 
     // VALIDA O ATENDIMETO (DUPLICAÇÃO)
     $obScheduleDescription = EntitySchedule::getSchedules("`descricao` = '$postVars[descricao]'");

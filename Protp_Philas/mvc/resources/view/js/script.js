@@ -24,22 +24,3 @@
   });
 })();
 // #endregion form-validation.js */
-
-form = document.getElementById("form");
-
-form.addEventListener(
-  "submit",
-  function (event) {
-    p1 = document.getElementById("senha");
-    p2 = document.getElementById("confirmar_senha");
-
-    if (p1.value != p2.value) {
-      p2.classList.add("invalido");
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    form.classList.add("was-validated");
-  },
-  false
-);

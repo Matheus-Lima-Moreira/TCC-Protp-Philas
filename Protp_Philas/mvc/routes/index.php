@@ -16,8 +16,8 @@ $obRouter->get('/login', [
   'middlewares' => [
     'required-logout'
   ],
-  function () {
-    return new Response(200, Index\Login::getLogin());
+  function (Request $request) {
+    return new Response(200, Index\Login::getLogin($request));
   }
 ]);
 

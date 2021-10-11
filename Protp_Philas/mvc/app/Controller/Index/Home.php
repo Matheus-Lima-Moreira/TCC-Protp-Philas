@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Main;
+namespace App\Controller\Index;
 
 use App\Utils\View;
 
@@ -11,7 +11,7 @@ class Home extends Page {
    *
    * @return  string  
    */
-  public static function getHome() {
+  public static function getHome(): string {
     // VIEW DA HOME
     $content =  View::render('home');
 

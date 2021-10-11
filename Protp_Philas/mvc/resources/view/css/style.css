@@ -1,6 +1,6 @@
 /* #region singin.css  */
-/* html,
-body {
+/* 
+html, body {
   height: 100%;
 }
 
@@ -41,9 +41,10 @@ body {
 /* #endregion singin.css */
 
 /* #region form-validation.css*/
-/* .container {
-  max-width: 960px;
-} */
+/* Style para validação */
+.form-container {
+  max-width: 960px; 
+}
 /* #endregion form-validation.css*/
 
 /* #region sidebars.css*/
