@@ -3,7 +3,7 @@
 namespace App\Controller\User;
 
 use App\Http\Request;
-use App\Model\Entity\Us;
+use App\Model\Entity\Us as EntityUs;
 use App\Utils\View;
 use WilliamCosta\DatabaseManager\Pagination;
 
@@ -13,7 +13,7 @@ class Page {
   private static array $styles = [['style', 'CSS']];
 
   /** @var array Scripts padrões */
-  private static array $scripts = [['script', 'JavaScript']];
+  private static array $scripts = [['form-validation', 'Validação Dos Forms']];
 
   /**
    * Método responsável por renderizar o topo da página
@@ -96,7 +96,7 @@ class Page {
 
     // AJUSTA O FINAL DA PAGINAÇÃO
     $end = $limit + $start;
-
+    
     // AJUSTA O INÍCIO DA PAGINAÇÃO
     if ($end > count($pages)) {
       $diff = $end - count($pages);
@@ -105,7 +105,7 @@ class Page {
 
     // LINK INCIAL
     if ($start > 0)
-      $links .= self::getPaginationLink($queryParams, reset($pages), $url, '<<');
+      $links .= self::getPaginationLink($queryParams, reset($pages), $url, '«');
 
     // RENDERIZA OS LINKS
     foreach ($pages as $page) {
@@ -114,7 +114,7 @@ class Page {
 
       // VERIFICA O END DA PAGINA
       if ($page['page'] > $end) {
-        $links .= self::getPaginationLink($queryParams, end($pages), $url, '>>');
+        $links .= self::getPaginationLink($queryParams, end($pages), $url, '»');
         break;
       }
 
@@ -173,9 +173,6 @@ class Page {
     }
     $scripts = $temp;
 
-    // INSTÂNCIA DA ENTIDADE 'US'
-    $obUs = new Us;
-
     // RENDERIZA A PÁGINA GENÉRICA
     return View::render('user/page', [
       'styles'  => $styles,
@@ -184,7 +181,7 @@ class Page {
       'content' => $content,
       'footer'  => $footer ?? self::getFooter(),
       'scripts' => $scripts,
-      'us_name' => $obUs->name
+      'us_name' => (new EntityUs)->nome
     ]);
   }
 };

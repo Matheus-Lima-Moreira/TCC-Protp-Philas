@@ -25,4 +25,22 @@ class Date {
     // E ERA A MESMA INFORMADA
     return $validator and $validator->format($format) == $date;
   }
+
+  /**
+   * Método responsável por formatar datas
+   *
+   * @param   string  $formatting
+   * @param   string  $date
+   * @param   string  $format
+   *
+   * @return  string
+   */
+  public static function format(string $formatting, string $date, string $format): string {
+    // VALIDA A DATA ENVIADA
+    if (!self::isvalid($date, $formatting))
+      throw new \InvalidArgumentException('Data não corresponde com a formatação');
+
+    // FORMATA A DATA ENVIADA
+    return DateTime::createFromFormat($formatting, $date)->format($format);
+  }
 }

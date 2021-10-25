@@ -13,6 +13,9 @@ include_once(__DIR__ . '/routes/index.php');
 // INCLUI AS ROTAS DAS PÁGINAS DO USUÁRIO
 include_once(__DIR__ . '/routes/user.php');
 
+// INCLUI AS ROTAS DAS PÁGINAS DO ADMIN
+include_once(__DIR__ . '/routes/admin.php');
+
 // INCLUI AS ROTAS DAS APIS
 include_once(__DIR__ . '/routes/api.php');
 

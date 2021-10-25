@@ -7,8 +7,14 @@ use App\Utils\View;
 use WilliamCosta\DatabaseManager\Database;
 use WilliamCosta\DotEnv\Environment;
 
+// DEFINE TIMEZONE PADRÃO 
+date_default_timezone_set('America/Sao_Paulo');
+
 // CARREGA VARIÁVEIS DE AMBIENTE
-Environment::load(__DIR__ . "/../");
+Environment::load(__DIR__ . '/' . '../');
+
+// DEFINIE O ARQUIVO DE ARMEZENAMENTO
+App\Model\Entity\Us::config(__DIR__ . '/' . '../.model/Us.json');
 
 // DEFINE AS CONFIGURAÇÕES DE BANCO DE DADOS
 Database::config(
@@ -49,7 +55,9 @@ MiddlewareQueue::setMap([
 
 // DEFINE MIDDLEWARES PADRÕES POR ROTAS
 MiddlewareQueue::setDefaultPerRoutes([
-  'usuario'          => ['required-login'],
-  'api'              => [-1 => 'api'],
-  'api\/v1\/reasons' => ['api-auth'],
+  'usuario'            => ['required-login'],
+  'api'                => [-1 => 'api'],
+  'api\/v1\/reasons'   => ['api-auth'],
+  'api\/v1\/schedules' => ['api-auth'],
+  'admin'              => ['required-login', 'admin']
 ]);

@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '7741ab013378edcbc6d5cb8d80010b8b' => $baseDir . '/../app/Utils/PrintR.php',
+    '76095fa8d8a345fbcca58c2ae0fd0b41' => $baseDir . '/../app/Utils/CastToClass.php',
 );

@@ -30,7 +30,10 @@ class User {
   public $cpf;
 
   /** @var string Tipo relacionado as permissoões do usuário */
-  public $tipo = 'Comum';
+  public $tipo;
+
+  /** @var array Tipos possíveis para os usuários*/
+  public static $tipos = ['admin' => 'Admin', 'default' => 'Comum'];
 
   /** @var string Tabela atual no banco de dados da Entidade */
   private static $table = "usuario";
@@ -86,7 +89,7 @@ class User {
       'email'    => $this->email,
       'telefone' => $this->telefone,
       'cpf'      => $this->cpf,
-      'tipo'     => $this->tipo
+      'tipo'     => $this->tipo ?? self::$tipos['default']
     ]);
 
     // SUCESSO
@@ -106,7 +109,7 @@ class User {
       'email'    => $this->email,
       'telefone' => $this->telefone,
       'cpf'      => $this->cpf,
-      'tipo'     => $this->tipo
+      'tipo'     => $this->tipo ?? self::$tipos['default']
     ];
     
     // SE NÃO HOUVER SENHA, IGNORE-A

@@ -37,7 +37,7 @@ class TriggerError {
     echo '</pre>';
   }
 
-  /* FIXME: terminar isso que é muito pika
+  /* FIXMEx: terminar isso que é muito pika
     public static function dafault() {
       echo "<pre>";
       $debug_backtrace();

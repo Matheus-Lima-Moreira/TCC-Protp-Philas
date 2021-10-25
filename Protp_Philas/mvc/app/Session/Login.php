@@ -31,27 +31,19 @@ class Login {
     $_SESSION['ph_login']['usuario'] = $obUser;
 
     // DEFINE O TOKEN EM COOKIES
-    if ($remember) self::remember($obUser);
-
-    // SUCESSO
-    return true;
-  }
-
-  /**
-   * Método responsável por gerar um token JWT e salvar
-   *
-   * @param   EntityUser  $obUser  
-   */
-  private static function remember(Object $obUser) {
-    // PAYLOAD
     $payload = [
       'id'    => $obUser->id,
       'login' => $obUser->login
     ];
 
-    // ENCODA E SALVA NOS COOKIES POR UM ANO
+    // ENCODA O TOKEN
     $jwt = JWT::encode($payload, getenv('JWT_KEY'));
-    setcookie('ph_login-token', $jwt, time() + 86400 * 365, "/");
+
+    // SALVA NOS COOKIES DE SESSÃO OU POR UM ANO
+    setcookie('ph_login-token', $jwt, $remember ? time() + 86400 * 365 : 0, '/');
+
+    // SUCESSO
+    return true;
   }
 
   /**
@@ -83,7 +75,7 @@ class Login {
         // ESTÁ LOGADO
         return true;
       } catch (\Exception $e) {
-        throw new \Exception("Token inválido", 403); // FIXME: Gerar algum erro interno ou ao usuario
+        throw new \Exception("Token inválido", 403); // TODO: Gerar algum erro interno ou ao usuario
       }
     }
 

@@ -29,5 +29,11 @@ sem_mvc/
 # Pasta para salvar credenciais 
 logins_lembrar/
 
+# Images (alteram fácil)
+img/
+
 # Cache dos Testes
 .phpunit*
+
+# Model
+.model/

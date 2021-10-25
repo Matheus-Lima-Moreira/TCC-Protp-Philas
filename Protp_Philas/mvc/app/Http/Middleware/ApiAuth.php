@@ -81,7 +81,7 @@ class ApiAuth implements MiddlewareInterface {
       // RETORNA A ENTIDADE USUÁRIO
       return $obUser;
     } catch (\Exception $e) {
-      throw new \Exception('Token inválido', 403); // FIXME: Gerar um aviso ao usuário
+      throw new \Exception('Token inválido', 403); // TODO: Gerar um aviso ao usuário
     }
   }
 

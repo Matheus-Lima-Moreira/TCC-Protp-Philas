@@ -47,8 +47,8 @@ class MyAccount extends Page {
    *
    * @return  void
    */
-  private static function returnStatus(Request $request, string $status): void {
-    $request->getRouter()->redirect('/usuario/minhaConta?status=' . $status);
+  private static function returnStatus(Request $request, string $status, string $url = '/usuario/minhaConta'): void {
+    $request->getRouter()->redirect($url . '?status=' . $status);
   }
 
   /**
@@ -62,11 +62,14 @@ class MyAccount extends Page {
     // USUÁRIO LOGADO
     $obUser = $_SESSION['ph_login']['usuario'];
 
+    // NOME COMPLETO DO USUÁRIO REPARTIDO
+    $fullname = explode(' ', $obUser->nome, 2);
+
     // VIEW DA MINHA CONTA
     $content = View::render('user/formEdit', [
       'title_form' => '',
-      'name'       => explode(' ', $obUser->nome, 2)[0],
-      'lastname'   => explode(' ', $obUser->nome, 2)[1],
+      'name'       => $fullname[0] ?? '',
+      'lastname'   => $fullname[1] ?? '',
       'phone'      => $obUser->telefone,
       'cpf'        => $obUser->cpf,
       'user'       => $obUser->login,
@@ -154,7 +157,7 @@ class MyAccount extends Page {
     // VALIDA A SENHA (ATUAL)
     $obUserPassword = EntityUser::getUserById($_SESSION['ph_login']['usuario']->id);
     if (!password_verify($senha_atual, $obUserPassword->senha))
-      self::returnStatus($request, 'senhaAtualIncorreta');
+      self::returnStatus($request, 'senhaAtualIncorreta', '/usuario/minhaConta/senha');
 
     // ATUALIZA SOMENTE A SENHA DO USUÁRIO
     $obUserPassword->senha = $nova_senha;
@@ -164,6 +167,6 @@ class MyAccount extends Page {
     SessionLogin::login($obUserPassword);
 
     // REDIRECIONA O USUÁRIO
-    self::returnStatus($request, 'senhaAlterada');
+    self::returnStatus($request, 'senhaAlterada', '/usuario/minhaConta/senha');
   }
 }

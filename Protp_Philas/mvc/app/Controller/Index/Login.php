@@ -8,7 +8,6 @@ use App\Session\Login as SessionLogin;
 use App\Utils\Alert;
 use App\Utils\View;
 
-// FIXME: ADD JS PRA SALVAR O TOKEN DO USUÁRIO LOGADO
 class Login extends Page {
 
   /**
@@ -54,8 +53,7 @@ class Login extends Page {
       $content,
       '',
       '',
-      [['signin', 'Custom styles for this template']],
-      [['script', 'JavaScript']]
+      [['signin', 'Custom styles for this template']]
     );
   }
 
@@ -80,6 +78,10 @@ class Login extends Page {
 
     // CRIA A SESSÃO DE LOGIN
     SessionLogin::login($obUser, $lembrar);
+
+    // VERIFICA SE É ADMIN
+    if (strtoupper($obUser->tipo) == strtoupper(\App\Model\Entity\User::$tipos['admin']))
+      $request->getRouter()->redirect('/admin');
 
     // REDIRECIONA O USUÁRIO PRO DASHBOARD
     $request->getRouter()->redirect('/usuario');

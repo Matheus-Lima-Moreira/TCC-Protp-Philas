@@ -8,6 +8,7 @@ class ComposerStaticInitdd7a5b83eaee89e3c05d9a227a56544b
 {
     public static $files = array (
         '7741ab013378edcbc6d5cb8d80010b8b' => __DIR__ . '/../..' . '/../app/Utils/PrintR.php',
+        '76095fa8d8a345fbcca58c2ae0fd0b41' => __DIR__ . '/../..' . '/../app/Utils/CastToClass.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -15,6 +16,10 @@ class ComposerStaticInitdd7a5b83eaee89e3c05d9a227a56544b
         array (
             'WilliamCosta\\DotEnv\\' => 20,
             'WilliamCosta\\DatabaseManager\\' => 29,
+        ),
+        'P' => 
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'F' => 
         array (
@@ -34,6 +39,10 @@ class ComposerStaticInitdd7a5b83eaee89e3c05d9a227a56544b
         'WilliamCosta\\DatabaseManager\\' => 
         array (
             0 => __DIR__ . '/..' . '/william-costa/database-manager/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Firebase\\JWT\\' => 
         array (

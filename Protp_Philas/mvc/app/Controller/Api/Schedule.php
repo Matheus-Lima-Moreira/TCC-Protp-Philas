@@ -170,7 +170,7 @@ class Schedule extends Api {
     // BUSCA ATENDIMETO PELO ID
     $obSchedule = EntitySchedule::getScheduleById($id);
     if (!$obSchedule instanceof EntitySchedule)
-      throw new \Exception("O motivo($id) não foi encontrado", 404);
+      throw new \Exception("O atendimento($id) não foi encontrado", 404);
 
     // RETORNA OS DADOS DO ATENDIMENTO
     return self::getScheduleData($obSchedule);
@@ -249,14 +249,14 @@ class Schedule extends Api {
 
     // RENDERIZA CADA HORÁRIO
     while ($obSchedule = $schedulesDay->fetchObject(EntitySchedule::class)) {
-      $format = 'Y-m-d H:i:s';
+      $format = 'H:i';
 
       $data_marcada = $obSchedule->data_marcada;
       $tempo_previsto = $obSchedule->tempo_previsto ?? EntityReason::getReasonById($obSchedule->cod_motivo)->tempo_previsto;
 
-      $occupiedHours[$obSchedule->id] = [
-        'início' => date($format, strtotime($data_marcada)),
-        'término' => date($format, strtotime($data_marcada . " + $tempo_previsto minutes")),
+      $occupiedHours[] = [
+        'inicio' => date($format, strtotime($data_marcada)),
+        'termino' => date($format, strtotime($data_marcada . " + $tempo_previsto minutes")),
       ];
     }
 
@@ -289,17 +289,13 @@ class Schedule extends Api {
 
     // VALIDA O COD_MOTIVO 
     if (isset($postVars['cod_motivo'])) {
-      // VALIDA O ENVIO JUNTO DA DESCRICAO OU DO TEMPO_PREVISTO
-      if ((isset($postVars['descricao']) || isset($postVars['tempo_previsto'])))
-        throw new \Exception("Se o campo 'cod_motivo' for informado, o campo 'descricao' ou 'tempo_previsto' não deverá ser, e vice versa", 400);
-
       // VALIDA SE EXISTE
       if (!EntityReason::getReasonById($postVars['cod_motivo']) instanceof EntityReason)
         throw new \Exception("O motivo($postVars[cod_motivo]) não foi encontrado", 404);
     }
     // VALIDA O ENVIDO DA DESCRICAO 
     else if (!isset($postVars['descricao']))
-      throw new \Exception("É obrigatório enivido do campo 'cod_motivo' ou 'descricao'", 400);
+      throw new \Exception("É obrigatório envio do campo 'cod_motivo' ou 'descricao'", 400);
 
     // VALIDA O TEMPO_PREVISTO
     if (isset($postVars['tempo_previsto'])) {
@@ -323,7 +319,7 @@ class Schedule extends Api {
       $atendente = EntityUser::getUserById($postVars['cod_atendente']);
       if (
         (!$atendente instanceof EntityUser) ||
-        strtolower($atendente->tipo) == 'comum'
+        strtoupper($atendente->tipo) != strtoupper(EntityUser::$tipos['admin'])
       ) throw new \Exception("O atendente($postVars[cod_atendente]) não foi encontrado", 404);
     }
   }
@@ -333,16 +329,17 @@ class Schedule extends Api {
    *
    * @param   string  $date
    * @param   int     $expectedTime
+   * @param   int     $scheduleId
    *
    * @return  void
    */
-  private static function validateScheduledDate(string $date, int $expectedTime): void {
+  private static function validateScheduledDate(string $date, int $expectedTime, int $scheduleId = null): void {
     // VALIDA O HORÁRIO DA DATA MARCADA
-    if (strtotime($date) <= time()) // FIXME: adcionar antecedencia & Tempo comercial
+    if (strtotime($date) <= time()) // TODO: adcionar antecedencia & Tempo comercial
       throw new \Exception('Data marcada inválida!', 400);
 
     // BUSCA PELA PRIMEIRA DATA ANTERIOR
-    $previousDate = EntitySchedule::getSchedules("data_marcada <= '$date'", 'data_marcada DESC', '1');
+    $previousDate = EntitySchedule::getSchedules("data_marcada <= '$date'" . ($scheduleId ? ' AND id !=' . $scheduleId : ''), 'data_marcada DESC', '1');
     $previousDate = $previousDate->fetchObject(EntitySchedule::class);
 
     // VERIFICA SE EXISTE DATA ANTERIOR
@@ -359,7 +356,7 @@ class Schedule extends Api {
     }
 
     // BUSCA PELA PRIMEIRA DATA POSTERIOR
-    $nextDate = EntitySchedule::getSchedules("data_marcada >= '$date'", 'data_marcada ASC', '1');
+    $nextDate = EntitySchedule::getSchedules("data_marcada >= '$date'" . ($scheduleId ? ' AND id !=' . $scheduleId : ''), 'data_marcada ASC', '1');
     $nextDate = $nextDate->fetchObject(EntitySchedule::class);
 
     // VERIFICA SE EXISTE DATA POSTERIOR
@@ -394,6 +391,10 @@ class Schedule extends Api {
     $postVars = array_filter($postVars, function ($field) use ($validFields) {
       return in_array($field, $validFields);
     }, ARRAY_FILTER_USE_KEY);
+
+    // VALIDA O ENVIO DO COD_MOTIVO JUNTO DA DESCRICAO OU DO TEMPO_PREVISTO
+    if (isset($postVars['cod_motivo']) && isset($postVars['descricao']))
+      throw new \Exception("Se o campo 'cod_motivo' for informado, o campo 'descricao' não deverá ser, e vice versa", 400);
 
     // VALIDA OS CAMPOS
     self::validateFields($postVars);
@@ -443,14 +444,91 @@ class Schedule extends Api {
     // VALIDA OS CAMPOS
     self::validateFields($postVars);
 
-    // VARIFICA SE A DATA MARCADA ESTÁ DISPONÍVEL
-    // TODO: terminar isso aqui lol
+    // VERIFICA SE A DATA MARCADA ESTÁ DISPONÍVEL E SE SERÁ ATUALIZADA
+    if (
+      isset($postVars['data_marcada']) &&
+      $postVars['data_marcada'] != EntitySchedule::getScheduleById($id)->data_marcada
+    ) {
+      // VALIDA OS DADOS NECESSÁRIOS PARA O TEMPO PREVISTO
+      if (!isset($postVars['cod_motivo']) && !isset($postVars['tempo_previsto']))
+        throw new \Exception('Só possível marcar um horário com um motivo ou tempo previsto', 400);
 
-    // VALIDA O ATENDIMETO (DUPLICAÇÃO)
-    $obScheduleDescription = EntitySchedule::getSchedules("`descricao` = '$postVars[descricao]'");
-    $obScheduleDescription = $obScheduleDescription->fetchObject(EntitySchedule::class);
-    if ($obScheduleDescription instanceof EntitySchedule && $obScheduleDescription->id != $id)
-      throw new \Exception("A descricao '$postVars[descricao]' já existe", 409);
+      // BUSCA PELO TEMPO PREVISTO
+      $tempo_previsto = $postVars['tempo_previsto'] ?? EntityReason::getReasonById($postVars['cod_motivo'])->tempo_previsto;
+
+      self::validateScheduledDate($postVars['data_marcada'], $tempo_previsto, $id);
+    }
+
+    // ATUALIZA O ATENDIMETO
+    $obSchedule = self::setScheduleData($postVars);
+    $obSchedule->id = $id;
+    $obSchedule->update();
+
+    // RETORNA OS DETALHES DO ATENDIMETO ATUALIZADO
+    return self::getScheduleData($obSchedule);
+  }
+
+  /**
+   * Método responsável por atualizar um atendimento do usuário logado
+   *
+   * @param   Request  $request
+   * @param   int      $id
+   *
+   * @return  array
+   */
+  public static function setEditMySchedule(Request $request, $id): array {
+    // VALIDA O ID DO ATENDIMETO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
+    // VALIDA BASEADO NO USUÁRIO LOGADO
+    $obCurrentSchedule = EntitySchedule::getSchedules("id = $id AND cod_atendido = {$request->userLogged->id}")->fetchObject(EntitySchedule::class);
+    if (!$obCurrentSchedule instanceof EntitySchedule)
+      throw new \Exception("O atendimento($id) não foi encontrado", 404);
+
+    // POST VARS
+    $postVars = $request->getPostVars();
+
+    // CAMPOS VÁLIDOS PRA USUÁRIO COMUM
+    $validFields = ['cod_motivo', 'descricao', 'data_marcada', 'cod_atendente'];
+
+    // REMOVE QUALQUER CAMPOS NÃO VÁLIDO
+    $postVars = array_filter($postVars, function ($field) use ($validFields) {
+      return in_array($field, $validFields);
+    }, ARRAY_FILTER_USE_KEY);
+
+    // MATEM OS DADOS INTEGROS
+    if ($obCurrentSchedule->cod_motivo) {
+      $postVars['cod_motivo'] = (int) $obCurrentSchedule->cod_motivo;
+      $postVars['descricao']  = $obCurrentSchedule->descricao;
+    } else if ($obCurrentSchedule->tempo_previsto) {
+      $postVars['tempo_previsto'] = (int) $obCurrentSchedule->tempo_previsto;
+      $postVars['descricao']      = $obCurrentSchedule->descricao;
+    }
+
+    // VALIDA O ENVIO DO COD_MOTIVO JUNTO DA DESCRICAO
+    if (!$obCurrentSchedule->cod_motivo && isset($postVars['cod_motivo']) && isset($postVars['descricao']))
+      throw new \Exception("Se o campo 'cod_motivo' for informado, o campo 'descricao' não deverá ser, e vice versa", 400);
+
+    // VALIDA OS CAMPOS
+    self::validateFields($postVars);
+
+    // VERIFICA SE A DATA MARCADA ESTÁ DISPONÍVEL E SE SERÁ ATUALIZADA
+    if (
+      isset($postVars['data_marcada']) &&
+      $postVars['data_marcada'] != $obCurrentSchedule->data_marcada
+    ) {
+      // VALIDA OS DADOS NECESSÁRIOS PARA O TEMPO PREVISTO
+      if (!isset($postVars['cod_motivo']) && !isset($obCurrentSchedule->tempo_previsto))
+        throw new \Exception('Só possível marcar um horário com um motivo', 400);
+
+      // BUSCA PELO TEMPO PREVISTO
+      $tempo_previsto = $obCurrentSchedule->tempo_previsto ?? EntityReason::getReasonById($postVars['cod_motivo'])->tempo_previsto;
+
+      self::validateScheduledDate($postVars['data_marcada'], $tempo_previsto, $id);
+    }
+
+    // SETA O ATENDIDO COMO O USUÁRIO ATUAL
+    $postVars['cod_atendido'] = $request->userLogged->id;
 
     // ATUALIZA O ATENDIMETO
     $obSchedule = self::setScheduleData($postVars);
@@ -478,6 +556,30 @@ class Schedule extends Api {
 
     // EXCLUI O ATENDIMETO
     $obSchedule->delete();
+
+    // RETORNA O SUCESSO DO ATENDIMETO EXLCUIDO
+    return ['sucesso' => true];
+  }
+
+  /**
+   * Método responsável por excluir um atendimento do usuário logado
+   *
+   * @param   Request  $request
+   * @param   int      $id
+   *
+   * @return  array
+   */
+  public static function setDeleteMySchedule(Request $request, $id): array {
+    // VALIDA O ID DO ATENDIMETO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
+    // VALIDA BASEADO NO USUÁRIO LOGADO
+    $obCurrentSchedule = EntitySchedule::getSchedules("id = $id AND cod_atendido = {$request->userLogged->id}")->fetchObject(EntitySchedule::class);
+    if (!$obCurrentSchedule instanceof EntitySchedule)
+      throw new \Exception("O atendimento($id) não foi encontrado", 404);
+
+    // EXCLUI O ATENDIMETO
+    $obCurrentSchedule->delete();
 
     // RETORNA O SUCESSO DO ATENDIMETO EXLCUIDO
     return ['sucesso' => true];

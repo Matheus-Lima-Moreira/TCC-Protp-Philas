@@ -7,7 +7,6 @@ use App\Http\Response;
 // ROTA DE LISTAGEM DE TODOS OS ATENDIMENTOS
 $obRouter->get('/api/v1/schedules', [
   'middlewares' => [
-    'api-auth',
     'admin'
   ],
   function (Request $request) {
@@ -17,9 +16,7 @@ $obRouter->get('/api/v1/schedules', [
 
 // ROTA DE LISTAGEM DE TODOS OS ATENDIMENTOS DO USUÁRIO LOGADO
 $obRouter->get('/api/v1/schedules/mine', [
-  'middlewares' => [
-    'api-auth'
-  ],
+  'middlewares' => [],
   function (Request $request) {
     return new Response(200, Api\Schedule::getMySchedules($request), 'application/json');
   }
@@ -28,7 +25,6 @@ $obRouter->get('/api/v1/schedules/mine', [
 // ROTA DE LISTAGEM INDIVIDUAL DE ATENDIMENTOS
 $obRouter->get('/api/v1/schedules/{id}', [
   'middlewares' => [
-    'api-auth',
     'admin'
   ],
   function ($id) {
@@ -38,9 +34,7 @@ $obRouter->get('/api/v1/schedules/{id}', [
 
 // ROTA DE LISTAGEM DE HORÁRIOS OCUPADOS
 $obRouter->get('/api/v1/schedules/occupied', [
-  'middlewares' => [
-    'api-auth'
-  ],
+  'middlewares' => [],
   function (Request $request) {
     return new Response(200, Api\Schedule::getOccupiedHours($request), 'application/json');
   }
@@ -48,9 +42,7 @@ $obRouter->get('/api/v1/schedules/occupied', [
 
 // ROTA DE CADASTRO DOS ATENDIMENTOS
 $obRouter->post('/api/v1/schedules', [
-  'middlewares' => [
-    'api-auth'
-  ],
+  'middlewares' => [],
   function (Request $request) {
     return new Response(201, Api\Schedule::setNewSchedule($request), 'application/json');
   }
@@ -59,7 +51,6 @@ $obRouter->post('/api/v1/schedules', [
 // ROTA DE ATUALIZAÇÃO DE ATENDIMENTOS
 $obRouter->put('/api/v1/schedules/{id}', [
   'middlewares' => [
-    'api-auth',
     'admin'
   ],
   function (Request $request, $id) {
@@ -67,13 +58,28 @@ $obRouter->put('/api/v1/schedules/{id}', [
   }
 ]);
 
+// ROTA DE ATUALIZAÇÃO DOS ATENDIMENTOS DO USUÁRIO LOGADO
+$obRouter->put('/api/v1/schedules/mine/{id}', [
+  'middlewares' => [],
+  function (Request $request, $id) {
+    return new Response(200, Api\Schedule::setEditMySchedule($request, $id), 'application/json');
+  }
+]);
+
 // ROTA DE EXCLUSÃO DE ATENDIMENTOS
 $obRouter->delete('/api/v1/schedules/{id}', [
   'middlewares' => [
-    'api-auth',
     'admin'
   ],
   function ($id) {
     return new Response(200, Api\Schedule::setDeleteSchedule($id), 'application/json');
+  }
+]);
+
+// ROTA DE EXCLUSÃO DOS ATENDIMENTOS DO USUÁRIO LOGADO
+$obRouter->delete('/api/v1/schedules/mine/{id}', [
+  'middlewares' => [],
+  function (Request $request, $id) {
+    return new Response(200, Api\Schedule::setDeleteMySchedule($request, $id), 'application/json');
   }
 ]);

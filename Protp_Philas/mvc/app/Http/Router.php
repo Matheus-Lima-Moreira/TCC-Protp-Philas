@@ -163,7 +163,7 @@ class Router {
     $httpMethod = $this->request->getHttpMethod();
 
     // VALIDA AS ROTAS
-    krsort($this->routes); // FIXME: melhorar com 'uksort()'
+    krsort($this->routes); // TODO: melhorar com 'uksort()'
     foreach ($this->routes as $patternRoute => $methods) {
       // VERIFICA SE A URI BATE O PADRÃO
       if (preg_match($patternRoute, $uri, $matches)) {
@@ -254,8 +254,10 @@ class Router {
    * Método reponsável por redirecionar a URL
    *
    * @param   string  $route
+   * 
+   * @return  never
    */
-  public function redirect(string $route) {
+  public function redirect(string $route): void {
     // URL
     $url = $this->url . $route;
 

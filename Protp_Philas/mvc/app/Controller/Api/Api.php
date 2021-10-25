@@ -18,12 +18,12 @@ class Api {
   public static function getDetails() {
     // BUSCA AS NOSSAS IRMOFAÇÕES
     $obUs = new EntityUs;
-
-    // RETORNAR OS DAALHES DA API
+    
+    // RETORNAR OS DATALHES DA API
     return [
-      'nome'       => "API — $obUs->name",
+      'nome'       => "API — $obUs->nome",
       'versao'     => 'v1.0.0',
-      'autores'    => $obUs->authors,
+      'autores'    => $obUs->autores,
       'professoes' => [],
       'base'       => [
         'nome'     => 'William Costa',

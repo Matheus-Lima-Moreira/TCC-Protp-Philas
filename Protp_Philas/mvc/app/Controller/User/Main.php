@@ -73,13 +73,7 @@ class Main extends Page {
     // CONTEÚDO DO FORMULÁRIO
     $content = View::render('user/formNew', [
       'title_form' => 'Preencha com seus dados',
-      'status'     => self::getStatus($request),
-      'name'       => '',
-      'lastname'   => '',
-      'phone'      => '',
-      'cpf'        => '',
-      'user'       => '',
-      'email'      => ''
+      'status'     => self::getStatus($request)
     ]);
 
     // RETORNAR A PÁGINA RENDERIZA
@@ -88,6 +82,7 @@ class Main extends Page {
       $content,
       '',
       '',
+      scripts: [['https://www.google.com/recaptcha/api.js', 'captcha', true]]
     );
   }
 
@@ -101,6 +96,24 @@ class Main extends Page {
   public static function setNewUser(Request $request): string {
     // POST VARS
     $postVars = $request->getPostVars();
+
+    // VAFLIDAÇÃO CAPTCHA
+    if ($postVars['g-recaptcha-response'] == null || empty($postVars['g-recaptcha-response']))
+      throw new \Exception('reCAPTCHA ausente', 403);
+    // RESPONSE
+    $captcha = $postVars['g-recaptcha-response'];
+    // SECRET UNICA
+    $secret = getenv('G_CAPTCHA_KEY');
+    // IP DO USUÁRIO
+    $ip = $_SERVER['REMOTE_ADDR'];
+    // CONVERTE A VALIDAÇÂO EM JSON
+    $var = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha&remoteip=$ip");
+    $resposta = json_decode($var, true);
+
+    if (!$resposta['success'])
+      throw new \Exception('Erro com o reCAPTCHA', 403);
+
+    // DADOS DO NOVO USUÁRIO
     $nome     = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
     $senha    = $postVars['senha'];
     $telefone = $postVars['telefone'] ?? '';

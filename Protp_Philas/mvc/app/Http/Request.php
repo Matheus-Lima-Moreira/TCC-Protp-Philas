@@ -49,6 +49,9 @@ class Request {
     // POST JSON
     $inputRaw = file_get_contents('php://input');
     $this->postVars = (strlen($inputRaw)) && (empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
+
+    // FILES
+    $this->postVars += $_FILES ?? [];
   }
 
   /**

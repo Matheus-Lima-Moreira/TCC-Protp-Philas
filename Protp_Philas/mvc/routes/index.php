@@ -40,3 +40,32 @@ $obRouter->get('/logout', [
     return new Response(200, Index\Login::setLogout($request));
   }
 ]);
+
+// ROTA SOBRE
+$obRouter->get('/sobre', [
+  function () {
+    return new Response(200, Index\Us::getAbout());
+  }
+]);
+
+// ROTA AUTORES
+$obRouter->get('/sobre/{author}', [
+  function ($author) {
+    return new Response(200, Index\Us::getAuthors($author));
+  }
+]);
+
+// ROTA PRIVACIDADE
+$obRouter->get('/privacidade', [
+  function () {
+    return new Response(200, Index\Us::getPrivacy());
+  }
+]);
+
+// ROTA TERMOS
+$obRouter->get('/sitemap', [
+  function () {
+    return new Response(200, Index\Us::getMap());
+  }
+]);
+

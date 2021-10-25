@@ -20,7 +20,8 @@ class Admin implements MiddlewareInterface {
     $userLogged = $request->userLogged ?? $_SESSION['ph_login']['usuario'];
 
     // VERIFICA SE É UM ADMINISTRADOR
-    if (strtoupper($userLogged->tipo) != 'ADMIN') throw new \Exception("Acesso restritro", 403);
+    if (strtoupper($userLogged->tipo) != strtoupper(\App\Model\Entity\User::$tipos['admin']))
+      throw new \Exception("Acesso restritro", 403);
 
     // EXECUTA O PRÓXIMO NÍVEL DO MIDDLEWARE
     return $next($request);

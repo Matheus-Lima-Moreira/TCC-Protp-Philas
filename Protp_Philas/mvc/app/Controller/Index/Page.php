@@ -2,7 +2,7 @@
 
 namespace App\Controller\Index;
 
-use App\Model\Entity\Us;
+use App\Model\Entity\Us as EntityUs;
 use App\Utils\View;
 
 class Page {
@@ -11,7 +11,7 @@ class Page {
   private static array $styles = [['style', 'CSS']];
 
   /** @var array Scripts padrões */
-  private static array $scripts = [[]];
+  private static array $scripts = [['form-validation', 'Validação Dos Forms']];
 
   /**
    * Método responsável por renderizar o topo da página
@@ -77,9 +77,6 @@ class Page {
     }
     $scripts = $temp;
 
-    // INSTÂNCIA DA ENTIDADE 'US'
-    $obUs = new Us;
-
     // RENDERIZA A PÁGINA GENÉRICA
     return View::render('page', [
       'styles'  => $styles,
@@ -88,7 +85,7 @@ class Page {
       'content' => $content,
       'footer'  => $footer ?? self::getFooter(),
       'scripts' => $scripts,
-      'us_name' => $obUs->name
+      'us_name' => (new EntityUs)->nome
     ]);
   }
 }
