@@ -1,0 +1,35 @@
+{
+    "nome": "Protótipo Philas",
+    "descricao": "Objetivando uma modelar assessoria, para com à Secretaria Institucional do Philadelpho, propomos a concepção de um arranjo virtual, visando a estipulação de serviços em geral. Ou, um Website feito a se facilitar o gerenciamento da programação e agendamentos de nossa Secretaria, com base em sistemas do tipo spiders e teoria das filas.",
+    "autores": {
+        "laiany": {
+            "nome": "Laiany Kamili",
+            "links": {},
+            "descricao": "Nascida no interior de São José do Rio Preto, São Paulo, embora não muito experiente na área, Laiany, sempre se interessou, e demais, pelo campo de Desenvolvimento de Sistemas, e também por várias de suas ramificações tecnológicas, claro. Uma garota muito dedicada, e diligente, quando preciso. Entendida, sobretudo, na produção e exibição de certos textos, termos, como este mesmo, por exemplo.",
+            "imagem": "laiany.jpg"
+        },
+        "luis": {
+            "nome": "Luis Guerra",
+            "links": {
+                "gmail": "luisguerra2004@gmail.com",
+                "github": "https://github.com/Luis-Guerra-Ocarinna"
+            },
+            "descricao": "Uma peça fundamental para a concepção e produção do site, Luis manteve-se realmente determinado a levar nossa ideia da plataforma a diante, como pudesse, ajudando e muito em seu desenvolvimento e aprimoramento, desde o primeiro esboço até sua fase final.",
+            "imagem": "luis.jpg"
+        },
+        "matheus": {
+            "nome": "Matheus De Lima Moreira",
+            "links": {
+                "gmail": "6matheuslima@gmail.com",
+                "github": "https://github.com/Matheus-Lima-Moreira"
+            },
+            "descricao": "Olá!! Eu sou o Matheus e fui um dos desenvolvedores do Philas, desde a elaboração do projeto, até a sua finalização, estive sempre muito envolvido em sua programação, empenhando-se ao máximo em cada linha de código, procurando torná-lo o mais funcional possível, com esquemas aplicados de Front-End para interface, visando uma melhor execução do site, em relação ao seus usuários.",
+            "imagem": "matheus.jpg"
+        }
+    },
+    "conteudo": {
+        "titulo": "Philadelpho Gouvea Netto",
+        "texto": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dui massa, pretium sed ipsum eget, facilisis tristique dolor. Duis fringilla nunc eu urna aliquet mattis. Suspendisse odio sem, imperdiet vitae egestas at, aliquet sit amet magna.",
+        "imagem": "default.jpg"
+    }
+}

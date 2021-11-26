@@ -15,7 +15,7 @@ CHANGELOG.md
 bootstrap/
 jquery/
 # nn sei se esse é Framework nn (TypeScript v1 declaration files)
-typings/ 
+# typings/ 
 
 # dotenv environment variables file
 .env
@@ -24,17 +24,17 @@ typings/
 # --- Protótipo ---
 
 # O que já não é mais usado, mas pode ser utíl
-Coisas_antigas/
-sem_mvc/
+# Coisas_antigas/
+# sem_mvc/
 
 # Pasta para salvar credenciais 
-logins_lembrar/
+# logins_lembrar/
 
 # Images (alteram fácil)
-img/
+# img/
 
 # Cache dos Testes
 .phpunit*
 
 # Model
-.model/
+# .model/
