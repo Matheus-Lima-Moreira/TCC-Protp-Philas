@@ -5,7 +5,7 @@ namespace App\Utils;
 /**
  * Classe responsável por controlar uploads de arquivos
  */
-// FIXME: retirar a gambiarra
+// TODO: retirar a gambiarra (comversão de imagemens para jpg)
 class Upload {
 
   /**

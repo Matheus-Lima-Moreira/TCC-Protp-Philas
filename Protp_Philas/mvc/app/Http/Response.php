@@ -84,4 +84,21 @@ class Response {
         exit;
     }
   }
+
+  /**
+   * Médodo responsável por enviar o redirecionamento
+   *
+   * @param   string  $url
+   *
+   * @return  never
+   */
+  public function sendRedirect(string $url): void {
+    // ADICIONA O REDIRECIONAMENTO
+    $this->addHeader('Location', [$url]);
+
+    // ENIVA OS HEADERS (E REDIRECIONA)
+    $this->sendHeaders();
+
+    exit;
+  }
 }

@@ -30,7 +30,7 @@ class Page {
    * @return  string
    */
   private static function getFooter() {
-    return View::render('user/footer');
+    return View::render('footer');
   }
 
   /**
@@ -46,6 +46,9 @@ class Page {
   private static function getPaginationLink(array $queryParams, array $page, string $url, string $label = null): string {
     // ALTERA PÁGINA
     $queryParams['page'] = $page['page'];
+
+    // REMOVE O STATUS
+    unset($queryParams['status']);
 
     // LINK
     $link = $url . '?' . http_build_query($queryParams);

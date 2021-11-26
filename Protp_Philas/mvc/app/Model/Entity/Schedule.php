@@ -52,14 +52,15 @@ class Schedule {
   }
 
   /**
-   * Método responsável por retornar um Motivo combase no seu id
+   * Método responsável por retornar um Atendimento combase no seu id
    *
-   * @param   integer  $id  
+   * @param   int     $id
+   * @param   string  $where
    *
-   * @return  Schedule    
+   * @return  Schedule
    */
-  public static function getScheduleById(int $id) {
-    return self::getSchedules("id = $id")->fetchObject(self::class);
+  public static function getScheduleById(int $id, ?string $where = null) {
+    return self::getSchedules("id = $id" . ($where ? " AND ($where)"  : ''), $where)->fetchObject(self::class);
   }
 
 
@@ -112,5 +113,60 @@ class Schedule {
   public function delete() {
     // EXCLUI O ATEDIMENTO DO BANCO DE DADOS
     return (new Database(self::$table))->delete('id = ' . $this->id);
+  }
+
+  /**
+   * Método responsável por excluir os campos com chave estrangeira (usuário)
+   *
+   * @param   User  $obUser
+   *
+   * @return  bool
+   */
+  public static function deleteUserForeignKeys(User $obUser): bool {
+    // RESULTADOS DOS ATENDIMENTOS COM O ATENDIDO
+    $schdeules = self::getSchedules('cod_atendido = ' . $obUser->id);
+
+    // ALTERA CADA REGISTRO
+    while ($obSchedule = $schdeules->fetchObject(self::class)) {
+      $obSchedule->cod_atendido = null;
+      $obSchedule->descricao .= PHP_EOL . ' - Cliente excluído: ' . $obUser->nome . '(' . $obUser->id . ').';
+      $obSchedule->update();
+    }
+
+    // RESULTADOS DOS ATENDIMENTOS COM O ATENDENTE
+    $schdeules = self::getSchedules('cod_atendente = ' . $obUser->id);
+
+    // ALTERA CADA REGISTRO
+    while ($obSchedule = $schdeules->fetchObject(self::class)) {
+      $obSchedule->cod_atendente = null;
+      $obSchedule->descricao .= PHP_EOL . ' - Atendente excluído: ' . $obUser->nome . '(' . $obUser->id . ').';
+      $obSchedule->update();
+    }
+
+    // SUCESSO
+    return true;
+  }
+
+  /**
+   * Método responsável por excluir os campos com chave estrangeira (motivo)
+   *
+   * @param   Reason  $obReason
+   *
+   * @return  bool
+   */
+  public static function deleteReasonForeignKeys(Reason $obReason): bool {
+    // RESULTADOS DOS ATENDIMENTOS
+    $schdeules = self::getSchedules('cod_motivo = ' . $obReason->id);
+
+    // ALTERA CADA REGISTRO
+    while ($obSchedule = $schdeules->fetchObject(self::class)) {
+      $obSchedule->cod_motivo = null;
+      $obSchedule->descricao .= PHP_EOL . ' - Motivo excluído: ' . $obReason->descricao . '(' . $obReason->id . ').';
+      $obSchedule->tempo_previsto = $obReason->tempo_previsto;
+      $obSchedule->update();
+    }
+
+    // SUCESSO
+    return true;
   }
 }

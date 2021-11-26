@@ -14,7 +14,7 @@ date_default_timezone_set('America/Sao_Paulo');
 Environment::load(__DIR__ . '/' . '../');
 
 // DEFINIE O ARQUIVO DE ARMEZENAMENTO
-App\Model\Entity\Us::config(__DIR__ . '/' . '../.model/Us.json');
+App\Model\Entity\Us::config(__DIR__ . '/' . '../app/Model/Data/.model/Us.json');
 
 // DEFINE AS CONFIGURAÇÕES DE BANCO DE DADOS
 Database::config(

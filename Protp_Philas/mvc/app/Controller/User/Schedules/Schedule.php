@@ -7,6 +7,7 @@ use App\Controller\User\Page;
 use App\Http\Request;
 use App\Model\Entity\Reason as EntityReason;
 use App\Model\Entity\Schedule as EntitySchedule;
+use App\Session\Main as SessionMain;
 use App\Utils\Alert;
 use App\Utils\Date;
 use App\Utils\View;
@@ -29,8 +30,8 @@ class Schedule extends Page {
 
     // MENSAGEM DE STATUS
     switch ($queryParams['status']) {
-      case 'agendamentoSucesso':
-        return Alert::getSuccess('Agendamento criado com sucesso!');
+      case 'atendimentoSucesso':
+        return Alert::getSuccess('Atendimento criado com sucesso!');
       default:
         return '';
     }
@@ -53,7 +54,7 @@ class Schedule extends Page {
       $itens .= View::render('user/schedules/reason/item', [
         'cod_reason'    => $obReason->id,
         'expected_time' => $obReason->tempo_previsto,
-        'reason'        => $obReason->descricao . ' - Tempo Previsto: ' . $obReason->tempo_previsto . 'min',
+        'reason'        => $obReason->descricao /* CONFUSO: . ' - Tempo Previsto: ' . $obReason->tempo_previsto . 'min' */,
       ]);
     }
 
@@ -69,21 +70,19 @@ class Schedule extends Page {
    */
   public static function getNewSchedules(Request $request): string {
     // USUÁRIO LOGADO
-    $obUser = $_SESSION['ph_login']['usuario'];
+    $obUser = SessionMain::get('user_logged');
 
     // SELECT DE MOTIVOS
     $boxReason = View::render('user/schedules/reason/box', [
-      'item' => self::getReasonsItems()
+      'readonly'      => '',
+      'selected'      => 'selected',
+      'item'          => self::getReasonsItems(),
+      'selectedOther' => ''
     ]);
-
-    // NOME COMPLETO DO USUÁRIO REPARTIDO
-    $fullname = explode(' ', $obUser->nome, 2);
 
     // VIEW DA AGENDAMENTO
     $content =  View::render('user/schedules/formNew', [
-      'title_form'    => '',
-      'name'          => $fullname[0] ?? '',
-      'lastname'      => $fullname[1] ?? '',
+      'name'          => $obUser->nome,
       'email'         => $obUser->email,
       'select_reason' => $boxReason,
       'status'        => self::getStatus($request),
@@ -106,7 +105,7 @@ class Schedule extends Page {
   }
 
   /**
-   * Método responsável por validar a disponibilidade da Data Maracada
+   * Método responsável por validar a disponibilidade da Data Marcada
    *
    * @param   string  $date
    * @param   int     $expectedTime
@@ -149,7 +148,7 @@ class Schedule extends Page {
       $date = strtotime($date . "+ $expectedTime minutes");
 
       // VALIDA CONFLITO DE HORÁRIOS MARCADOS POSTERIORES
-      if ($nextDate <= $date)
+      if ($nextDate <= $date) // TODO: retornar alerta
         throw new \Exception('A data marcada está conflitando com uma data posterior', 409);
     }
   }
@@ -161,12 +160,13 @@ class Schedule extends Page {
    *
    * @return  never
    */
+  // TODO: Validações no back-end
   public static function setNewSchedules(Request $request): void {
     // POST VARS
     $postVars     = $request->getPostVars();
     $motivo       = $postVars['motivo'] ?: null;
-    $data_marcada = $postVars['data_marcada'] ?? null;
-    $descricao    = $postVars['descricao'] ?? null;
+    $data_marcada = $postVars['data_marcada'] ?: null;
+    $descricao    = $postVars['descricao'] ?: null;
 
     // VALIDA A DATA
     if (!$descricao) {
@@ -186,13 +186,11 @@ class Schedule extends Page {
 
     $obSchedule->cod_motivo   = $motivo;
     $obSchedule->descricao    = $descricao;
-    $obSchedule->cod_atendido = $_SESSION['ph_login']['usuario']->id;
+    $obSchedule->cod_atendido = SessionMain::get('user_logged')->id;
     $obSchedule->data_marcada = $data_marcada;
     $obSchedule->insert();
 
     // REDIRECIONA O USUÁRIO
-    $request->getRouter()->redirect('/usuario/agendamento?status=agendamentoSucesso');
+    $request->getRouter()->redirect('/usuario?status=atendimentoSucesso' . ($descricao ? 'Confirmar' : ''));
   }
-
-  // REMINDER: ALterar e Excluir
 }

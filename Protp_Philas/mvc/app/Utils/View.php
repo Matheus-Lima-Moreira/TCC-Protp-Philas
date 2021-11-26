@@ -130,8 +130,8 @@ class View {
   /**
    * Método responsável por retornar o conteúdo renderizado de uma view
    *
-   * @param   string $view
-   * @param   array  $vars (string/numeric)
+   * @param   string            $view
+   * @param   (string|float)[]  $vars 
    * 
    * @return  string
    **/

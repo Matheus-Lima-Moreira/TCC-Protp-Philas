@@ -111,10 +111,10 @@ class User {
       'cpf'      => $this->cpf,
       'tipo'     => $this->tipo ?? self::$tipos['default']
     ];
-    
+
     // SE NÃO HOUVER SENHA, IGNORE-A
     if (isset($this->senha)) $userData['senha'] = password_hash($this->senha, PASSWORD_DEFAULT);
-     
+
     // ATUALIZA O USUÁRIO NO BANCO DE DADOS
     return (new Database(self::$table))->update('id = ' . $this->id, $userData);
   }
@@ -125,8 +125,10 @@ class User {
    * @return  boolean
    */
   public function delete() {
-    // EXCLUI O USUÁRIO DO BANCO DE DADOS
-    return (new Database(self::$table))->delete('id = ' . $this->id);
+    // ALTERA OS CAMPOS COM CHAVE ESTRANGEIRA
+    if (Schedule::deleteUserForeignKeys($this))
+      // EXCLUI O USUÁRIO DO BANCO DE DADOS
+      return (new Database(self::$table))->delete('id = ' . $this->id);
   }
 
   /**

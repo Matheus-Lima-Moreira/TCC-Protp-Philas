@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Request;
+use App\Session\Main as SessionMain;
 use Closure;
 
 class Admin implements MiddlewareInterface {
@@ -17,7 +18,7 @@ class Admin implements MiddlewareInterface {
    */
   public function handle(Request $request, Closure $next) {
     // BUSCA PELO USUÁRIO LOGADO
-    $userLogged = $request->userLogged ?? $_SESSION['ph_login']['usuario'];
+    $userLogged = $request->userLogged ?? SessionMain::get('user_logged');
 
     // VERIFICA SE É UM ADMINISTRADOR
     if (strtoupper($userLogged->tipo) != strtoupper(\App\Model\Entity\User::$tipos['admin']))

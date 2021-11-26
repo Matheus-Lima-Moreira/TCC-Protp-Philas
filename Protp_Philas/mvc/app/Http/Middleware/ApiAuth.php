@@ -131,17 +131,7 @@ class ApiAuth implements MiddlewareInterface {
       // REALIZA A VALIDAÇÃO DO ACESSO VIA BEARER AUTH
       $this->bearerAuth($request);
     } else { # NÃO HOUVE AUTENTICAÇÃO
-      // PREPARA A RESPONSE
-      $obResponse = new Response(401, [
-        'error' => 'Necessária autentição [Basic Auth] ou [Bearer Token]'
-      ], 'application/json');
-
-      // ADICIONA AS AUTENTICAÇÕES NECESSÁRIAS NO HEADER
-      $realm = ' realm="Acess to the APIs"';
-      $obResponse->addHeader('WWW-Authenticate', ['Basic' . $realm, 'Bearer' . $realm]);
-
-      // RETORNA A RESPONSE
-      return $obResponse;
+      throw new \Exception('Necessária autentição [Basic Auth] ou [Bearer Token]', 401);
     }
 
     // EXECUTA O PRÓXIMO NÍVEL DO MIDDLEWARE

@@ -58,13 +58,13 @@ class Reasons extends Page {
    * @return  string
    */
   public static function getReasonsItems(Request $request, ?Pagination &$obPagination): string {
-    //AGENDAMENTOS
+    // ATENDIMETOS
     $itens = '';
 
-    //QUANTIDADE TOTAL DE AGENDAMENTOS
+    // QUANTIDADE TOTAL DE ATENDIMETOS
     $quantidadeTotal = EntityReason::getReasons(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
 
-    //PÁGINA ATUAL
+    // PÁGINA ATUAL
     $queryParams = $request->getQueryParams();
     $paginaAtual = $queryParams['page'] ?? 1;
 
@@ -112,10 +112,7 @@ class Reasons extends Page {
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Motivos',
-      $content
-    );
+    return parent::getPage('Motivos', $content);
   }
 
   /**
@@ -127,7 +124,7 @@ class Reasons extends Page {
    */
   public static function getNewReason(Request $request): string {
     // VIEW DA MINHA CONTA
-    $content = View::render('admin/actions/reasons/formNew', [
+    $content = View::render('admin/actions/reasons/form', [
       'title_form'   => 'Cadastrar motivo',
       'status'       => self::getStatus($request),
       'descricao'    => '',
@@ -135,10 +132,7 @@ class Reasons extends Page {
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Motivos',
-      $content
-    );
+    return parent::getPage('Motivos', $content);
   }
 
   /**
@@ -146,24 +140,31 @@ class Reasons extends Page {
    *
    * @param   Request  $request
    *
+   * @return  never
    */
-  public static function setNewReason(Request $request) {
+  public static function setNewReason(Request $request): void {
     // POST VARS
-    $postVars     = $request->getPostVars();
+    $postVars = $request->getPostVars();
+
+    // DADOS DO FORMULÁRIO
     $descricao    = $postVars['descricao'];
     $tmp_previsto = $postVars['tmp_previsto'];
 
     // VALIDA SE O MOTIVO JÁ EXISTE
-
+    $obReasonD = EntityReason::getReasons("descricao = '$descricao'")->fetchObject(EntityReason::class);
+    if ($obReasonD instanceof EntityReason)
+      self::returnStatus($request, 'motivoExistente');
 
     // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
-    $obReason                 = new EntityReason;
+    $obReason = new EntityReason;
+
+    // SALVA OS DADOS
     $obReason->descricao      = $descricao;
     $obReason->tempo_previsto = $tmp_previsto;
     $obReason->insert();
 
-    // REDIRECIONA O USUÁRIO
-    return self::returnStatus($request, 'motivoCadastrado');
+    // REDIRECIONA O ADMIN
+    self::returnStatus($request, 'motivoCadastrado');
   }
 
   /**
@@ -185,7 +186,7 @@ class Reasons extends Page {
       throw new \Exception("O motivo($id) não foi encontrado", 404);
 
     // VIEW DE EDITAR REASON SELECIONADO
-    $content = View::render('admin/actions/reasons/formEdit', [
+    $content = View::render('admin/actions/reasons/form', [
       'title_form'   => 'Editar motivo',
       'status'       => self::getStatus($request),
       'descricao'    => $obReason->descricao,
@@ -193,31 +194,40 @@ class Reasons extends Page {
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Motivos',
-      $content
-    );
+    return parent::getPage('Motivos', $content);
   }
 
   /**
    * Método responsável por editar o motivo selecionado
    *
    * @param   Request  $request
-   * @param   integer  $id
+   * @param   int      $id
    *
-   * @return  string
+   * @return  never
    */
-  public static function setEditReason(Request $request, $id) {
+  public static function setEditReason(Request $request, $id): void {
+    // VALIDA O ID DO MOTIVO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
+
+    // OBTEM O MOTIVO DO BANCO DE DADOS
+    $obReason = EntityReason::getReasonById($id);
+    if (!$obReason instanceof EntityReason)
+      throw new \Exception("O motivo($id) não foi encontrado", 404);
+
     // POST VARS
-    $postVars     = $request->getPostVars();
+    $postVars = $request->getPostVars();
+
+    // DADOS DO FORMULÁRIO
     $descricao    = $postVars['descricao'];
     $tmp_previsto = $postVars['tmp_previsto'];
 
     // VALIDA SE O MOTIVO JÁ EXISTE
+    $obReasonD = EntityReason::getReasons("descricao = '$descricao' AND id != $id")->fetchObject(EntityReason::class);
+    if ($obReasonD instanceof EntityReason)
+      $request->getRouter()->redirect('/admin/motivos/' . $id . '/edit?status=motivoExistente');
 
-    // NOVA INSTÂNCIA DA ENTIDADE REASON
-    $obReason                 = new EntityReason;
-    $obReason->id             = $id;
+    // ATUALIZA OS DADOS
     $obReason->descricao      = $descricao;
     $obReason->tempo_previsto = $tmp_previsto;
     $obReason->update();
@@ -235,8 +245,14 @@ class Reasons extends Page {
    * @return  string
    */
   public static function getDeleteReason($id): string {
-    // OBTEM O USUÁRIO DO BANCO DE DADOS
+    // VALIDA O ID DO MOTIVO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
+
+    // OBTEM O MOTIVO DO BANCO DE DADOS
     $obReason = EntityReason::getReasonById($id);
+    if (!$obReason instanceof EntityReason)
+      throw new \Exception("O motivo($id) não foi encontrado", 404);
 
     // VIEW DE DELETAR MOTIVO
     $content = View::render('admin/actions/reasons/delete', [
@@ -246,24 +262,28 @@ class Reasons extends Page {
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Motivos',
-      $content
-    );
+    return parent::getPage('Motivos', $content);
   }
 
   /**
    * Método responsável por excluir o motivo selecionado
    *
    * @param   Request  $request
-   * @param   integer  $id
+   * @param   int      $id
    *
-   * @return  string
+   * @return  never
    */
-  public static function setDeleteReason(Request $request, $id) {
-    // OBTEM O USUÁRIO DO BANCO DE DADOS
-    $obReason = EntityReason::getReasonById($id);
+  public static function setDeleteReason(Request $request, $id): void {
+    // VALIDA O ID DO MOTIVO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
 
+    // OBTEM O MOTIVO DO BANCO DE DADOS
+    $obReason = EntityReason::getReasonById($id);
+    if (!$obReason instanceof EntityReason)
+      throw new \Exception("O motivo($id) não foi encontrado", 404);
+
+    // EXCLUI O MOTIVO
     $obReason->delete();
 
     // REDIRECIONA O USUÁRIO

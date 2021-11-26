@@ -1,5 +1,5 @@
 -- CRIA O BANCO
-CREATE DATABASE `tcc_protp_philas`;
+CREATE DATABASE `tcc_protp_philas`; -- COMMENT 'Protótipo do TCC'
 
 -- CRIA A TABEAL USUÁRIO
 CREATE TABLE `tcc_protp_philas`.`usuario` (
@@ -12,7 +12,7 @@ CREATE TABLE `tcc_protp_philas`.`usuario` (
   `cpf`       VARCHAR(14)   NOT NULL                  COMMENT 'Campo para validação do usuário (?)',
   `tipo`      VARCHAR(255)  NOT NULL  DEFAULT 'Comum' COMMENT 'Definição dos privilégios do usuário',
   PRIMARY KEY (`id`),
-  UNIQUE `login_unique` (`login`(255))
+  UNIQUE `login_unique` (`login`)
 ) ENGINE = InnoDB CHARSET = utf8 COLLATE utf8_general_ci COMMENT = 'Tabela para dados do usuário';
 
 -- CRIA A TABELA MOTIVO
@@ -33,7 +33,7 @@ CREATE TABLE `tcc_protp_philas`.`atendimento` (
   `data_marcada`    DATETIME  NULL                    COMMENT 'Data marcada para o atendimento',
   `data_iniciada`   DATETIME  NULL                    COMMENT 'Data de início do atendimento',
   `data_finalizada` DATETIME  NULL                    COMMENT 'Data de finalização do atendimento',
-  `cod_atendido`    INT       NOT NULL                COMMENT 'Chave Estrangeira do usuário que será atendido',
+  `cod_atendido`    INT       NULL                    COMMENT 'Chave Estrangeira do usuário que será atendido',
   `cod_atendente`   INT       NULL                    COMMENT 'Chave Estrangeira do usuário que realizará o atendimento',
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8 COLLATE utf8_general_ci COMMENT = 'Tabela para dados do atendimento';
@@ -50,23 +50,8 @@ ALTER TABLE `tcc_protp_philas`.`atendimento`
 -- SELECIONA O BANCO
 USE `tcc_protp_philas`;
 
--- INSERÇÃO DE VALORES NA TABELA USUÁRIO
+-- INSERÇÃO DE NECESSÁRIOS
 INSERT INTO `usuario` 
   (`id`, `nome`, `login`, `senha`, `email`, `telefone`, `cpf`, `tipo`)
-VALUES 
-  (NULL, 'Luis Guerra Santa Rosa', 'Luis', '$2y$10$vU2M/eKzAw8emXkAU5iwjOZFZn6cHDo1iH7i/6lNPKwV.1yNrPSFO', 'luis@email.com', '17987654321', '12345678901', 'Comum'),
-  (NULL, NULL, 'Admil', '$2y$10$mbkpPmoCjCCFqZvqJSD8b.UCEZoL8uTIFk4vIavTcDuV912PXZ3QK', NULL, NULL, '12345678901', 'Admin');
-
--- INSERÇÃO DE VALORES NA TABELA MOTIVO
-INSERT INTO `motivo`
-  (`id`, `descricao`, `tempo_previsto`)
 VALUES
-  (NULL, 'Matrícula', 10),
-  (NULL, 'Boletim', 5);
-
--- INSERÇÃO DE VALORES NA TABELA ATENDIEMENTO
-INSERT INTO `atendimento`
-  (`id`, `cod_motivo`, `descricao`, `tempo_previsto`, `data_marcada`, `data_iniciada`, `data_finalizada`, `cod_atendido`, `cod_atendente`)
-VALUES
-  (NULL, 1, NULL, NULL, '2021-09-03 03:00:00', '2021-09-03 03:00:00', '2021-09-03 03:07:00', 1, 2),
-  (NULL, NULL, 'Gostaria de ter acesso ao meu boletim', NULL, NULL, NULL, NULL, 1, 2);
+  (NULL, 'Lorem ipsum dolor sit amet', 'Admin', '$2y$10$mbkpPmoCjCCFqZvqJSD8b.UCEZoL8uTIFk4vIavTcDuV912PXZ3QK', 'admin@example.com', '11111111111', '95788537002', 'Admin');

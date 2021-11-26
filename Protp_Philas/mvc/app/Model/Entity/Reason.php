@@ -77,10 +77,12 @@ class Reason {
   /**
    * Método responsável por excluir a intância atual
    *
-   * @return  boolean
+   * @return  bool
    */
-  public function delete() {
-    // EXCLUI O MOTIVO DO BANCO DE DADOS
-    return (new Database(self::$table))->delete('id = ' . $this->id);
+  public function delete(): bool {
+    // ALTERA OS CAMPOS COM CHAVE ESTRANGEIRA
+    if (Schedule::deleteReasonForeignKeys($this))
+      // EXCLUI O MOTIVO DO BANCO DE DADOS
+      return (new Database(self::$table))->delete('id = ' . $this->id);
   }
 }

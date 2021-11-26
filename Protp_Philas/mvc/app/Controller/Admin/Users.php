@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Http\Request;
 use App\Model\Entity\User as EntityUser;
+use App\Session\Main as SessionMain;
 use App\Utils\Alert;
 use App\Utils\CPF;
 use App\Utils\Masker;
@@ -44,12 +45,12 @@ class Users extends Page {
   }
 
   /**
-   * Método responsável por redirecionar o usuário com um status
+   * Método responsável por redirecionar o admin com um status
    *
    * @param   Request  $request
    * @param   string   $status
    *
-   * @return  void
+   * @return  never
    */
   private static function returnStatus(Request $request, string $status): void {
     $request->getRouter()->redirect('/admin/usuarios/new?status=' . $status);
@@ -63,13 +64,16 @@ class Users extends Page {
    * @return  string
    */
   public static function getUsersItems(Request $request, ?Pagination &$obPagination): string {
-    //AGENDAMENTOS
+    // ATENDIEMTO
     $itens = '';
 
-    //QUANTIDADE TOTAL DE AGENDAMENTOS
-    $quantidadeTotal = EntityUser::getUsers(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+    // ADMIN LOGADO
+    $obAdmin = SessionMain::get('user_logged');
 
-    //PÁGINA ATUAL
+    // QUANTIDADE TOTAL DE ATENDIEMTO
+    $quantidadeTotal = EntityUser::getUsers("id != $obAdmin->id", null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+
+    // PÁGINA ATUAL
     $queryParams = $request->getQueryParams();
     $paginaAtual = $queryParams['page'] ?? 1;
 
@@ -84,7 +88,7 @@ class Users extends Page {
     $obPagination = new Pagination($quantidadeTotal, $paginaAtual, $limit);
 
     //RESULTADOS DO USUÁRIO
-    $results = EntityUser::getUsers(null, 'id DESC', $obPagination->getLimit());
+    $results = EntityUser::getUsers("id != $obAdmin->id", 'id DESC', $obPagination->getLimit());
 
     // RENDERIZA O ITEM TODO
     while ($obUser = $results->fetchObject(EntityUser::class)) {
@@ -165,34 +169,43 @@ class Users extends Page {
     ]);
 
     // VIEW DA MINHA CONTA
-    $content = View::render('admin/actions/users/formNew', [
-      'title_form'  => 'Cadastrar usuário',
-      'status'      => self::getStatus($request),
-      'select_type' => $boxType
+    $content = View::render('admin/actions/users/form', [
+      'title_form'     => 'Cadastrar Usuário',
+      'status'         => self::getStatus($request),
+      'name'           => '',
+      'lastname'       => '',
+      'pw_placeholder' => '********************',
+      'pw_required'     => 'required',
+      'phone'          => '',
+      'cpf'            => '',
+      'user'           => '',
+      'email'          => '',
+      'select_type'    => $boxType
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Usuários',
-      $content
-    );
+    return parent::getPage('Usuários', $content);
   }
 
   /**
    * Método responsável por cadastrar um novo usuário no banco
    *
    * @param   Request  $request
+   * 
+   * @return  never
    */
-  public static function setNewUser(Request $request) {
+  public static function setNewUser(Request $request): void {
     // POST VARS
     $postVars = $request->getPostVars();
-    $nome     = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
+
+    // DADOS DO FORMULÁRIO
+    $nome     = ($postVars['nome'] && $postVars['sobrenome']) ? "$postVars[nome] $postVars[sobrenome]" : null;
     $senha    = $postVars['senha'];
-    $telefone = $postVars['telefone'] ?? '';
+    $telefone = $postVars['telefone'] ?: null;
     $cpf      = Masker::remove($postVars['cpf']);
     $login    = $postVars['usuario'];
-    $email    = $postVars['email'];
-    $tipo     = $postVars['tipo'];
+    $email    = $postVars['email'] ?: null;
+    $tipo     = $postVars['tipo'] ?: null;
 
     // VALIDA O LOGIN DO USUÁRIO
     $obUserLogin = EntityUser::getUserByLogin($login);
@@ -202,7 +215,9 @@ class Users extends Page {
     if (!CPF::isvalid($cpf)) self::returnStatus($request, 'cpfInvalido');
 
     // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
-    $obUser           = new EntityUser;
+    $obUser = new EntityUser;
+
+    // SALVA OS DADOS
     $obUser->nome     = $nome;
     $obUser->senha    = $senha;
     $obUser->telefone = $telefone;
@@ -212,8 +227,8 @@ class Users extends Page {
     $obUser->tipo     = $tipo;
     $obUser->insert();
 
-    // REDIRECIONA O USUÁRIO
-    return self::returnStatus($request, 'usuarioCadastrado');
+    // REDIRECIONA O ADMIN
+    self::returnStatus($request, 'usuarioCadastrado');
   }
 
   /**
@@ -230,69 +245,79 @@ class Users extends Page {
       throw new \Exception("O id '$id' não é válido", 400);
 
     // OBTEM O USUÁRIO DO BANCO DE DADOS
-    $obUserId = EntityUser::getUserById(intval($id));
-    if (!$obUserId instanceof EntityUser)
+    $obUser = EntityUser::getUserById(intval($id));
+    if (!$obUser instanceof EntityUser)
       throw new \Exception("O usuário($id) não foi encontrado", 404);
 
     // SELECT DE TIPOS
     $boxType = View::render('admin/actions/users/type/box', [
       'selected' => '',
-      'item'     => self::getTypesItems($obUserId->tipo)
+      'item'     => self::getTypesItems($obUser->tipo)
     ]);
 
     // NOME COMPLETO DO USUÁRIO REPARTIDO
-    $fullname = explode(' ', $obUserId->nome, 2);
+    $fullname = explode(' ', $obUser->nome, 2);
 
     // VIEW DE EDITAR USUÁRIO SELECIONADO
-    $content = View::render('admin/actions/users/formEdit', [
-      'title_form'  => 'Editar usuário',
-      'status'      => self::getStatus($request),
-      'name'        => $fullname[0] ?? '',
-      'lastname'    => $fullname[1] ?? '',
-      'phone'       => $obUserId->telefone,
-      'cpf'         => $obUserId->cpf,
-      'user'        => $obUserId->login,
-      'select_type' => $boxType,
-      'email'       => $obUserId->email
+    $content = View::render('admin/actions/users/form', [
+      'title_form'     => 'Editar Usuário',
+      'status'         => self::getStatus($request),
+      'name'           => $fullname[0] ?? '',
+      'lastname'       => $fullname[1] ?? '',
+      'pw_placeholder' => 'Preencher somente para alteração',
+      'pw_required'     => '',
+      'phone'          => $obUser->telefone ?? '',
+      'cpf'            => $obUser->cpf ?? '',
+      'user'           => $obUser->login,
+      'email'          => $obUser->email,
+      'select_type'    => $boxType
     ]);
 
     // RETORNA A VIEW DA PÁGINA 
-    return parent::getPage(
-      'Usuários',
-      $content
-    );
+    return parent::getPage('Usuários', $content);
   }
 
   /**
    * Método responsável por editar o usuário selecionado
    *
    * @param   Request  $request
-   * @param   integer  $id
+   * @param   int      $id
    *
-   * @return  string
+   * @return  never
    */
-  public static function setEditUser(Request $request, $id) {
+  public static function setEditUser(Request $request, $id): void {
+    // VALIDA O ID DO MOTIVO
+    if (!(is_numeric($id) ? intval($id) == $id : false))
+      throw new \Exception("O id '$id' não é válido", 400);
+
+    // OBTEM O USUÁRIO DO BANCO DE DADOS
+    $obUser = EntityUser::getUserById(intval($id));
+    if (!$obUser instanceof EntityUser)
+      throw new \Exception("O usuário($id) não foi encontrado", 404);
+
     // POST VARS
     $postVars = $request->getPostVars();
-    $nome     = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
-    $telefone = $postVars['telefone'] ?? '';
+
+    // DADOS DO FORMULÁRIO
+    $nome     = ($postVars['nome'] && $postVars['sobrenome']) ? "$postVars[nome] $postVars[sobrenome]" : null;
+    $senha    = $postVars['senha'] ?: null;
+    $telefone = $postVars['telefone'] ?: null;
     $cpf      = Masker::remove($postVars['cpf']);
     $login    = $postVars['usuario'];
-    $email    = $postVars['email'];
-    $tipo     = $postVars['tipo'];
+    $email    = $postVars['email'] ?: null;
+    $tipo     = $postVars['tipo'] ?: null;
 
     // VALIDA O LOGIN (DUPLICAÇÃO)
-    $obUserId = EntityUser::getUserByLogin($postVars['usuario']);
-    if ($obUserId instanceof EntityUser && $obUserId->id != $id)
+    $obUserLogin = EntityUser::getUserByLogin($postVars['usuario']);
+    if ($obUserLogin instanceof EntityUser && $obUserLogin->id != $id)
       $request->getRouter()->redirect('/admin/usuarios/' . $id . '/edit?status=usuarioExistente');
 
     // VALIDA O CPF
     if (!CPF::isvalid($cpf)) self::returnStatus($request, 'cpfInvalido');
 
-    // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
-    $obUser           = new EntityUser;
-    $obUser->id       = $id;
+    // ATUALIZA OS DADOS
     $obUser->nome     = $nome;
+    $obUser->senha    = $senha;
     $obUser->telefone = $telefone;
     $obUser->cpf      = $cpf;
     $obUser->login    = $login;
@@ -300,7 +325,7 @@ class Users extends Page {
     $obUser->tipo     = $tipo;
     $obUser->update();
 
-    // REDIRECIONA O USUÁRIO
+    // REDIRECIONA O ADMIN
     $request->getRouter()->redirect('/admin/usuarios/' . $id . '/edit?status=usuarioAlterado');
   }
 
@@ -342,6 +367,7 @@ class Users extends Page {
     // OBTEM O USUÁRIO DO BANCO DE DADOS
     $obUserId = EntityUser::getUserById($id);
 
+    // DELETA O USUÁRIO SELECIONADO
     $obUserId->delete();
 
     // REDIRECIONA O USUÁRIO

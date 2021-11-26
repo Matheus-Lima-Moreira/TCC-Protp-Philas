@@ -1,11 +1,7 @@
-<div class="col-12">
-  <label for="motivo" class="form-label">Motivo</label>
-  <select name="motivo" id="motivo" class="form-select" required>
-    <option value="" disabled selected>Escolher</option>
+<select name="motivo" id="motivo" class="form-select" {{readonly}} required>
+  <option value="-1" disabled {{selected}}>Escolher</option>
 
-    {{item}}
+  {{item}}
 
-    <option value="">Outro</option>
-  </select>
-  <div class="invalid-feedback">Selecione um motivo.</div>
-</div>
+  <option value="" {{selectedOther}}>Outro</option>
+</select>

@@ -8,14 +8,6 @@ use Firebase\JWT\JWT;
 class Login {
 
   /**
-   * Método responsável por iniciar a sessão
-   */
-  private static function init() {
-    // VERIFICA SE A SESSÃO NÃO ESTÁ ATIVA
-    if (session_status() != PHP_SESSION_ACTIVE) session_start();
-  }
-
-  /**
    * Método responsável por criar o login do usuário
    *
    * @param   EntityUser    $obUser
@@ -24,11 +16,8 @@ class Login {
    * @return  boolean        
    */
   public static function login(Object $obUser, bool $remember = false): bool {
-    // INICIA A SESSÃO
-    self::init();
-
     // DEFINE A SESSÃO DO USUÁRIO
-    $_SESSION['ph_login']['usuario'] = $obUser;
+    Main::set('user_logged', $obUser);
 
     // DEFINE O TOKEN EM COOKIES
     $payload = [
@@ -52,11 +41,8 @@ class Login {
    * @return  boolean
    */
   public static function isLogged(): bool {
-    // INICIA A SESSÃO
-    self::init();
-
     // BUSCA PELA SESSÃO DO USUÁRIO
-    $return = isset($_SESSION['ph_login']['usuario']);
+    $return = Main::isSet('user_logged');
 
     // BUSCA POR TOKEN NOS COOKIES
     if (!$return && isset($_COOKIE['ph_login-token'])) {
@@ -67,6 +53,7 @@ class Login {
 
         // VALIDA OS DADOS FORNECIDOS NO JWT
         $obUser = EntityUser::getUserByLogin($jwt->login);
+        if (!$obUser) return false;
         if (!$obUser->isValidToken($jwt)) throw new \Exception();
 
         // RENOVA O LOGIN
@@ -89,11 +76,8 @@ class Login {
    * @return  boolean
    */
   public static function logout(): bool {
-    // INICIA A SESSÃO
-    self::init();
-
     // DESLOGA O USUÁRIO
-    unset($_SESSION['ph_login']['usuario']);
+    Main::delete('user_logged', 'referer');
     setcookie('ph_login-token', '', 1, '/');
 
     // SUCESSO

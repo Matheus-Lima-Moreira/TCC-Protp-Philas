@@ -5,7 +5,9 @@ namespace App\Controller\User;
 use App\Http\Request;
 use App\Model\Entity\User as EntityUser;
 use App\Session\Login as SessionLogin;
+use App\Session\Main as SessionMain;
 use App\Utils\Alert;
+use App\Utils\Email;
 use App\Utils\View;
 
 class MyAccount extends Page {
@@ -60,7 +62,7 @@ class MyAccount extends Page {
    */
   public static function getMyAccount(Request $request): string {
     // USUÁRIO LOGADO
-    $obUser = $_SESSION['ph_login']['usuario'];
+    $obUser = SessionMain::get('user_logged');
 
     // NOME COMPLETO DO USUÁRIO REPARTIDO
     $fullname = explode(' ', $obUser->nome, 2);
@@ -101,18 +103,26 @@ class MyAccount extends Page {
 
     // VALIDA O LOGIN (DUPLICAÇÃO)
     $obUserLogin = EntityUser::getUserByLogin($postVars['usuario']);
-    if ($obUserLogin instanceof EntityUser && $obUserLogin->id != $_SESSION['ph_login']['usuario']->id)
+    if ($obUserLogin instanceof EntityUser && $obUserLogin->id != SessionMain::get('user_logged')->id)
       self::returnStatus($request, 'usuarioExistente');
 
-    // NOVA INSTÂNCIA DA ENTIDADE USUÁRIO
-    $obUser           = new EntityUser;
-    $obUser->id       = $_SESSION['ph_login']['usuario']->id;
+    // USUÁRIO LOGADO
+    $obUser = EntityUser::getUserById(SessionMain::get('user_logged')->id);
+
+    // ATUALIZA OS DADOS
     $obUser->nome     = $nome;
     $obUser->telefone = $telefone;
     $obUser->cpf      = $cpf;
     $obUser->login    = $login;
-    $obUser->email    = $email;
+    $obUser->senha    = null; # ignora a senha
     $obUser->update();
+
+    // ATUALIZAÇÃO DO EMAIL
+    if ($obUser->email != $email) {
+      SessionLogin::logout();
+      Email::sendChangeEmail($email);
+      $request->getRouter()->redirect('/verificarEmail?status=usuarioAlteradoEmail');
+    }
 
     // LOGA O USUÁRIO
     SessionLogin::login($obUser);
@@ -155,7 +165,7 @@ class MyAccount extends Page {
     $senha_atual = $postVars['senha_atual'];
 
     // VALIDA A SENHA (ATUAL)
-    $obUserPassword = EntityUser::getUserById($_SESSION['ph_login']['usuario']->id);
+    $obUserPassword = EntityUser::getUserById(SessionMain::get('user_logged')->id);
     if (!password_verify($senha_atual, $obUserPassword->senha))
       self::returnStatus($request, 'senhaAtualIncorreta', '/usuario/minhaConta/senha');
 

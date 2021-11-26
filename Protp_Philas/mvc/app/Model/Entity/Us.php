@@ -11,6 +11,9 @@ class Us {
   /** @var string $nome Nome da nossa organazação */
   public $nome;
 
+  /** @var string $descricao Descrição da nossa organização */
+  public $descricao;
+
   /** @var Autor[] $autores Nossos nomes e contatos */
   public $autores;
 
@@ -39,6 +42,8 @@ class Us {
     // SETA CADA VALOR COM SUA REGRA
 
     $this->nome = $data->nome;
+
+    $this->descricao = $data->descricao;
 
     foreach ($data->autores as $autor => $content) {
       $this->autores[$autor] = casttoclass($content, Autor::class);

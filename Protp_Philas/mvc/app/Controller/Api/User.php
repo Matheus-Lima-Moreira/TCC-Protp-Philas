@@ -195,6 +195,9 @@ class User extends Api {
    * @return  array
    */
   public static function setNewUser(Request $request): array {
+    // NÃO CADASRAR PELA API, EVITAR BOTS
+    throw new \Exception('Não é possível cadastrar usuários pela API', 501);
+    
     // POST VARS
     $postVars = $request->getPostVars();
 

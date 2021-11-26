@@ -5,8 +5,11 @@ namespace App\Controller\Api;
 use App\Http\Request;
 use App\Model\Entity\Us as EntityUs;
 use App\Model\Entity\User as EntityUser;
+use App\Session\Login as SessionLogin;
 use Firebase\JWT\JWT;
 use WilliamCosta\DatabaseManager\Pagination;
+
+use function App\Utils\casttoclass;
 
 class Api {
 
@@ -18,7 +21,7 @@ class Api {
   public static function getDetails() {
     // BUSCA AS NOSSAS IRMOFAÇÕES
     $obUs = new EntityUs;
-    
+
     // RETORNAR OS DATALHES DA API
     return [
       'nome'       => "API — $obUs->nome",
@@ -88,5 +91,73 @@ class Api {
     return [
       'token' => JWT::encode($payload, getenv('JWT_KEY'))
     ];
+  }
+
+  /**
+   * Método responsável por cadastrar um novo usuário pós confirmação de email
+   *
+   * @param   Request  $request
+   *
+   * @return  never
+   */
+  public static function confirmEmail(Request $request): void {
+    // QUERY PARAMS
+    $queryParams = $request->getQueryParams();
+
+    // VALIDA O ENVIO DO TOKEN
+    if (!isset($queryParams['token']))
+      throw new \Exception('Token é obrigatório', 403);
+
+    // DECODA O TOKEN
+    try {
+      $jwt = JWT::decode($queryParams['token'], getenv('JWT_KEY'), ['HS256']);
+    } catch (\Exception $e) {
+      throw new \Exception('Token inválido', 403);
+    }
+
+    // INSERE OS DADOS PÓS CONFIRMAÇÃO
+    $obUser = casttoclass($jwt, EntityUser::class);
+    $obUser->insert();
+
+    // LOGA O NOVO USUÁRIO
+    SessionLogin::login($obUser);
+
+    // REDIRECIONA-O (PARA UM PAGINA QUE DIFERE 'COMUM' DE 'ADMIN')
+    $request->getRouter()->redirect('/login');
+  }
+
+  /**
+   * Método responsável por alterar o email do usuário
+   *
+   * @param   Request  $request
+   *
+   * @return  never
+   */
+  public static function changeEmail(Request $request): void {
+    // QUERY PARAMS
+    $queryParams = $request->getQueryParams();
+
+    // VALIDA O ENVIO DO TOKEN
+    if (!isset($queryParams['token']))
+      throw new \Exception('Token é obrigatório', 403);
+
+    // DECODA O TOKEN
+    try {
+      $jwt = JWT::decode($queryParams['token'], getenv('JWT_KEY'), ['HS256']);
+    } catch (\Exception $e) {
+      throw new \Exception('Token inválido', 403);
+    }
+
+    // INSERE OS DADOS PÓS CONFIRMAÇÃO
+    $obUser = EntityUser::getUserById($request->userLogged->id);
+    $obUser->email = $jwt;
+    $obUser->senha = null; # ignora a senha
+    $obUser->update();
+
+    // LOGA O NOVO USUÁRIO
+    SessionLogin::login($obUser);
+
+    // REDIRECIONA-O (PARA UM PAGINA QUE REINICIA O LOGIN)
+    $request->getRouter()->redirect('/login');
   }
 }

@@ -381,6 +381,9 @@ class Schedule extends Api {
    * @return  array
    */
   public static function setNewSchedule(Request $request): array {
+    // TODO: Add validação de horarios e finais de semana
+    throw new \Exception('Não implementado', 501);
+    
     // POST VARS
     $postVars = $request->getPostVars();
 
@@ -431,6 +434,9 @@ class Schedule extends Api {
    * @return  array
    */
   public static function setEditSchedule(Request $request, $id): array {
+    // TODO: Add validação de horarios e finais de semana
+    throw new \Exception('Não implementado', 501);
+    
     // VALIDA O ID DO ATENDIMETO
     if (!(is_numeric($id) ? intval($id) == $id : false))
       throw new \Exception("O id '$id' não é válido", 400);

@@ -6,8 +6,8 @@ use App\Http\Response;
 
 // ROTA HOME
 $obRouter->get('/usuario', [
-  function () {
-    return new Response(200, User\Main::getHome());
+  function (Request $request) {
+    return new Response(200, User\Main::getHome($request));
   }
 ]);
 

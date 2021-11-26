@@ -2,11 +2,36 @@
 
 namespace App\Controller\Index;
 
+use App\Http\Request;
 use App\Model\Entity\Us as EntityUs;
+use App\Utils\Alert;
+use App\Utils\Email;
 use App\Utils\View;
 
-// REMINDER: Terminar as nossas paginas
 class Us extends Page {
+
+  /**
+   * Método responsável por retornar a mensagem de status
+   *
+   * @param   Request  $request  
+   *
+   * @return  string             
+   */
+  private static function getStatus(Request $request): string {
+    // QUERY PARAMS
+    $queryParams = $request->getQueryParams();
+
+    // STATUS
+    if (!isset($queryParams['status'])) return '';
+
+    // MENSAGEM DE STATUS
+    switch ($queryParams['status']) {
+      case 'enviadoSucesso':
+        return Alert::getSuccess('A mensagem foi enviada com sucesso!');
+      default:
+        return '';
+    }
+  }
 
   /**
    * Método responsável por renderizar os contedúdos da organazação
@@ -17,14 +42,8 @@ class Us extends Page {
    * @return  string
    */
   private static function renderPage(string $title, string $content): string {
-    // FOOTER
-    $footer = View::render('us/footer');
-
-    // HEADER
-    $header = View::render('header');
-
     // RENDERIZADA O DEFAULT
-    return parent::getPage($title, $content, $header, $footer);
+    return parent::getPage($title, $content);
   }
 
   /**
@@ -84,7 +103,7 @@ class Us extends Page {
   public static function getAbout(): string {
     // VIEW DA TELA SOBRE NÓS
     $content = View::render('us/about/index', [
-      'text' => 'Objetivando uma modelar assessoria, em respeito a Secretaria Institucional do Philadelpho, propomos a concepção de um arranjo virtual para estipulação de serviços em geral. Um Website que visa facilitar os agendamentos à Secretaria, baseado nos sistemas de spiders, agendamento e filas.'
+      'text' => (new EntityUs)->descricao
     ]);
 
     // RETORNA A VIEW DA PÁGINA
@@ -99,6 +118,29 @@ class Us extends Page {
    * @return  string
    */
   public static function getAuthors(string $author): string {
+    function getLinks(object $links): string {
+      $itens = '';
+
+      if (empty($links)) return '';
+
+      foreach ($links as $hash => $link) {
+        $itens .= match ($hash) {
+          'gmail' => <<<HTML
+            <a href="mailto:$link" aria-label="Enviar email para $link" style="text-decoration: none">
+              <img style="border-radius:0.3rem" alt="Badge GMail" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
+            </a>
+            HTML,
+          'github' => <<<HTML
+            <a href="$link" aria-label="Github" style="text-decoration: none">
+              <img style="border-radius:0.3rem" alt="Badge Github" src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/>
+            </a>
+            HTML,
+        };
+      }
+
+      return $itens;
+    }
+
     // INSTANCIA DA ENTIDADE NÓS E OBTENÇÃO DOS AUTORES
     $obAuthors = (new EntityUs)->autores;
 
@@ -110,6 +152,7 @@ class Us extends Page {
     $content = View::render('us/about/authors', [
       'text'  => $obAuthors[$author]->descricao,
       'image' => $obAuthors[$author]->imagem ?: 'Files/default.jpg',
+      'links' => getLinks($obAuthors[$author]->links),
     ]);
 
     // RETORNA A VIEW DA PÁGINA
@@ -130,15 +173,38 @@ class Us extends Page {
   }
 
   /**
-   * Método responsável por retornar o conteúdo (VIEW) do SiteMap
+   * Método responsável por retornar o conteúdo (VIEW) do Fale Conosco
    *
    * @return  string
    */
-  public static function getMap(): string {
+  public static function getContact($request): string {
     // VIEW DA TELA PRIVACIDADE
-    $content = View::render('us/sitemap');
+    $content = View::render('us/suport', [
+      'title_form' => 'Fale Conosco',
+      'content'    => 'Utilize o formulário para nos enviar uma mensagem',
+      'status'     => self::getStatus($request)
+    ]);
 
     // RETORNA A VIEW DA PÁGINA
-    return self::renderPage('Termos', $content);
+    return self::renderPage('Fale Conosco', $content);
+  }
+
+  /**
+   * Método responsável por enviar a mensagem do Fale Conosco
+   *
+   * @return  string
+   */
+  public static function setContact($request) {
+    // POST VARS
+    $postVars  = $request->getPostVars();
+    $nome      = (isset($postVars['nome']) and isset($postVars['sobrenome'])) ? "$postVars[nome] $postVars[sobrenome]" : '';
+    $email     = $postVars['email'];
+    $mensagem  = $postVars['mensagem'];
+
+    // ENVIA EMAIL
+    Email::sendEmail($nome, $email, $mensagem);
+
+    // REDIRECIONA O USUÁRIO
+    $request->getRouter()->redirect('/contact?status=enviadoSucesso');
   }
 };

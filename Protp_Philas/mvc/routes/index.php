@@ -62,10 +62,23 @@ $obRouter->get('/privacidade', [
   }
 ]);
 
-// ROTA TERMOS
-$obRouter->get('/sitemap', [
-  function () {
-    return new Response(200, Index\Us::getMap());
+// ROTA CONTATO
+$obRouter->get('/contact', [
+  function (Request $request) {
+    return new Response(200, Index\Us::getContact($request));
   }
 ]);
 
+// ROTA CONTATO (POST) 
+$obRouter->post('/contact', [
+  function (Request $request) {
+    return new Response(200, Index\Us::setContact($request));
+  }
+]);
+
+// ROTA DE AVISO PARA CONFIRMAÇÃO DE EMAIL
+$obRouter->get('/verificarEmail', [
+  function (Request $request) {
+    return new Response(200, Index\Home::getConfirmEmail($request));
+  }
+]);

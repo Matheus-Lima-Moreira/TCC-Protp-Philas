@@ -5,6 +5,7 @@ namespace App\Controller\Index;
 use App\Http\Request;
 use App\Model\Entity\User;
 use App\Session\Login as SessionLogin;
+use App\Session\Main as SessionMain;
 use App\Utils\Alert;
 use App\Utils\View;
 
@@ -41,7 +42,6 @@ class Login extends Page {
    * @return  string
    */
   public static function getLogin(Request $request): string {
-
     // VIEW DO LOGIN
     $content = View::render('formLogin', [
       'status' => self::getStatus($request)
@@ -52,8 +52,7 @@ class Login extends Page {
       'Login',
       $content,
       '',
-      '',
-      [['signin', 'Custom styles for this template']]
+      styles: [['signin', 'Custom styles for this template']]
     );
   }
 
@@ -79,12 +78,15 @@ class Login extends Page {
     // CRIA A SESSÃO DE LOGIN
     SessionLogin::login($obUser, $lembrar);
 
+    // PÁGINA A SER ACESSADA
+    $referer = SessionMain::isSet('referer') ? SessionMain::get('referer') : null;
+
     // VERIFICA SE É ADMIN
     if (strtoupper($obUser->tipo) == strtoupper(\App\Model\Entity\User::$tipos['admin']))
-      $request->getRouter()->redirect('/admin');
+      $request->getRouter()->redirect($referer ?? '/admin');
 
     // REDIRECIONA O USUÁRIO PRO DASHBOARD
-    $request->getRouter()->redirect('/usuario');
+    $request->getRouter()->redirect($referer ?? '/usuario');
   }
 
 
