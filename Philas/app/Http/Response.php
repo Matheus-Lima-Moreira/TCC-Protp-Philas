@@ -23,7 +23,7 @@ class Response {
    * @param   mixed   $content      
    * @param   string  $contentType  
    */
-  public function __construct(int $httpCode, $content, ?string $contentType = null) {
+  public function __construct(int $httpCode, mixed $content, ?string $contentType = null) {
     $contentType = $contentType ?? $this->contentType;
 
     $this->httpCode = $httpCode;
@@ -83,5 +83,22 @@ class Response {
         echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
+  }
+
+  /**
+   * Médodo responsável por enviar o redirecionamento
+   *
+   * @param   string  $url
+   *
+   * @return  never
+   */
+  public function sendRedirect(string $url): void {
+    // ADICIONA O REDIRECIONAMENTO
+    $this->addHeader('Location', [$url]);
+
+    // ENIVA OS HEADERS (E REDIRECIONA)
+    $this->sendHeaders();
+
+    exit;
   }
 }

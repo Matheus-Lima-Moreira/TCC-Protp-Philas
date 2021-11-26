@@ -85,7 +85,7 @@ class Router {
       $params['variables'] = $matches[1];
     }
 
-    // REMOVE A BARRA NO FINAL DA ROTA  pq so não deixar a raiz sem barra??
+    // REMOVE A BARRA NO FINAL DA ROTA
     $route = rtrim($route, '/');
 
     // PADRÂO DE VÀLIDAÇÂO DA URL
@@ -163,6 +163,7 @@ class Router {
     $httpMethod = $this->request->getHttpMethod();
 
     // VALIDA AS ROTAS
+    krsort($this->routes); // TODO: melhorar com 'uksort()'
     foreach ($this->routes as $patternRoute => $methods) {
       // VERIFICA SE A URI BATE O PADRÃO
       if (preg_match($patternRoute, $uri, $matches)) {
@@ -215,7 +216,16 @@ class Router {
       // RETORNAR A EXECUÇÃO DA FILA DE MIDDLEWARES
       return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args, $this->request))->next($this->request);
     } catch (Exception $e) {
-      return new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->contentType);
+      $obResponse = new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->contentType);
+
+      if ($e->getCode() == 401)
+        // ADICIONA AS AUTENTICAÇÕES NECESSÁRIAS NO HEADER
+        $obResponse->addHeader('WWW-Authenticate', [
+          'Basic' . ' realm="Acess to the APIs"',
+          'Bearer' . ' realm="Acess to the APIs"'
+        ]);
+
+      return $obResponse;
     }
   }
 
@@ -253,13 +263,14 @@ class Router {
    * Método reponsável por redirecionar a URL
    *
    * @param   string  $route
+   * 
+   * @return  never
    */
-  public function redirect(string $route) {
+  public function redirect(string $route): void {
     // URL
     $url = $this->url . $route;
 
     // EXECUTA O REDIRECT
-    header('location: ' . $url);
-    exit;
+    (new Response(302, '', ''))->sendRedirect($url);
   }
 }

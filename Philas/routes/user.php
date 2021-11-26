@@ -1,7 +1,13 @@
 <?php
 
 // INCLUI AS ROTAS DE HOME
-require_once(__DIR__ . "/user/home.php");
+include_once(__DIR__ . '/user/home.php');
 
 // INCLUI AS ROTAS DA MINHA CONTA
-require_once(__DIR__ . "/user/myaccount.php");
+include_once(__DIR__ . '/user/myaccount.php');
+
+// INCLUI AS ROTAS DO AGENDAMENTO
+include_once(__DIR__ . '/user/schedule.php');
+
+// INCLUI AS ROTAS DO HISTÓRICO
+include_once(__DIR__ . '/user/historic.php');
